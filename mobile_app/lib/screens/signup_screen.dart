@@ -1,4 +1,5 @@
-import 'package:mobile_app/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mobile_app/screens/signin_screen.dart';
 import 'package:mobile_app/utils/color_utils.dart';
 
 import '../reusable_widgets/reusable_widgets.dart';
@@ -50,23 +51,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      reusableTextField("Enter Username", Icons.person_outlined, false, _userNameTextController),
+                      reusableTextField("Username", Icons.person_outlined, false, _userNameTextController),
 
                       const SizedBox(
                         height: 20,
                       ),
-                      reusableTextField("Enter Email Id", Icons.person_outlined, false, _emailTextController),
+                      reusableTextField("Email", Icons.person_outlined, false, _emailTextController),
 
                       const SizedBox(
                         height: 20,
                       ),
-                      reusableTextField("Enter Password", Icons.lock_outlined, false, _passwordTextController),
+                      reusableTextField("Password", Icons.lock_outlined, true, _passwordTextController),
 
                       const SizedBox(
                         height: 20,
                       ),
                       signInSignUpButton(context, false, (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                        FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(email: _emailTextController.text, password: _passwordTextController.text)
+                        .then((value) {
+                          print("Created New Account");
+
+                          Navigator
+                        .push(context, MaterialPageRoute(builder: (context) => const SignInScreen())); 
+                        }).onError((error, stackTrace) { print("Error: ${error.toString()}");}); 
                       })
                       
             ],

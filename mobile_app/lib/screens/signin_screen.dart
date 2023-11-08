@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mobile_app/screens/home_screen.dart';
 import 'package:mobile_app/screens/signup_screen.dart';
 import 'package:mobile_app/utils/color_utils.dart';
 
@@ -42,11 +44,22 @@ class _SignInScreenState extends State<SignInScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        reusableTextField("Enter Password", Icons.lock_outlined, false, _passwordTextController),
+                        reusableTextField("Enter Password", Icons.lock_outlined, true, _passwordTextController),
                          const SizedBox(
                           height: 20,
                         ),
-                        signInSignUpButton(context, true, () {}),
+
+                        signInSignUpButton(context, true, () {
+                          FirebaseAuth.instance.signInWithEmailAndPassword(email: _emailTextController.text, password: _passwordTextController.text)
+                          .then((value) {
+                            print("Log In Success");
+
+                            Navigator
+                            .push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                          }).onError((error, stackTrace) {
+                            print("Error ${error.toString()}");
+                          });
+                        }),
                         signUpOption()
                     ],
           ),
