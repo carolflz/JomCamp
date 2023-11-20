@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobile_app/screens/home_screen.dart';
 import 'package:mobile_app/screens/signup_screen.dart';
 import 'package:mobile_app/utils/color_utils.dart';
-
 import '../reusable_widgets/reusable_widgets.dart';
 import 'package:flutter/material.dart';
 
