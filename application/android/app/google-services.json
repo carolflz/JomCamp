@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "297160251276",
+    "project_id": "jomcamp-8453d",
+    "storage_bucket": "jomcamp-8453d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297160251276:android:59163e288a3197aa5aa8a9",
+        "android_client_info": {
+          "package_name": "com.cat304.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIphtkBfmJAj352SUxmRaIqdLWe_6VmXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

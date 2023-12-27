@@ -1,21 +1,21 @@
+import 'package:application/Ressuable_widget/banner_widget.dart';
+import 'package:application/Ressuable_widget/search_text_widget.dart';
+import 'package:application/Ressuable_widget/welcome_text_widget.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:flutter/material.dart';
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-   return Padding(
-        padding:  EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top, left: 25, right: 25),
-        child: Row(children: [ 
-          Text('JomCamp',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold
-          ),) 
-        ],
-      ),
-    ); 
+   return Column(
+     children: [
+       WelcomeText(),
+       SizedBox(height: 10,),
+       SearchText(),
+       BannerWidget()
+     ],
+   ); 
   }
 }
+
