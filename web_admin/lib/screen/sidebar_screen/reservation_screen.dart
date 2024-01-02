@@ -4,6 +4,8 @@ class ReservationScreen extends StatelessWidget {
   // ignore: unnecessary_string_escapes
   static const String routeName = '\Reservation';
 
+  const ReservationScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

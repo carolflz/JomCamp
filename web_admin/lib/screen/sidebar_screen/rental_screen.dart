@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RentalScreen extends StatelessWidget {
+  const RentalScreen({Key? key}) : super(key: key);
   // ignore: unnecessary_string_escapes
   static const String routeName = '\Rental';
 
