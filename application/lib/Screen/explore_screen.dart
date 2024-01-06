@@ -26,3 +26,4 @@ class ExploreScreen extends StatelessWidget {
     ));
   }
 }
+
