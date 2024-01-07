@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:application/Screen/error_screen.dart';
 import 'package:application/Screen/main_screen.dart';
 import 'package:application/api/notification_controller.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -17,9 +18,8 @@ void main() async {
           projectId: 'jomcamp-8453d',
         ))
       : await Firebase.initializeApp();
-  await AwesomeNotifications().initialize(null, [
+  await AwesomeNotifications().initialize('resource://drawable/res_app_icon', [
     NotificationChannel(
-        channelGroupKey: "basic_channel_group",
         channelKey: "basic_channel",
         channelName: "Basic Notification",
         channelDescription: "Test Notification Channel")
@@ -33,19 +33,23 @@ void main() async {
   if (!isAllowedToSendNotification) {
     AwesomeNotifications().requestPermissionToSendNotifications();
   }
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 }
 
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    NotificationController.appContext = context;
+
     AwesomeNotifications().setListeners(
         onActionReceivedMethod: NotificationController.onActionReceivedMethod,
         onDismissActionReceivedMethod:
@@ -54,6 +58,7 @@ class _MyAppState extends State<MyApp> {
             NotificationController.onNotificationCreateMethod,
         onNotificationDisplayedMethod:
             NotificationController.onNotificationDisplayMethod);
+
     super.initState();
   }
 
@@ -63,8 +68,25 @@ class _MyAppState extends State<MyApp> {
       SystemUiOverlayStyle(statusBarColor: Colors.transparent),
     );
     return MaterialApp(
+      navigatorKey: MyApp.navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'JomCamp Demo',
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (context) => MainScreen());
+
+          case '/notification-page':
+            return MaterialPageRoute(builder: (context) {
+              return ErrorScreen();
+            });
+
+          default:
+            assert(false, 'Page ${settings.name} not found');
+            return null;
+        }
+      },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,

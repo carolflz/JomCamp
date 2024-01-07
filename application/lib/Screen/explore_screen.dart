@@ -16,14 +16,19 @@ class ExploreScreen extends StatelessWidget {
       children: [
         WelcomeText(),
         SizedBox(
-          height: 60,
+          height: 10,
         ),
         SearchText(),
         BannerWidget(),
+        SizedBox(
+          height: 10,
+        ),
         MyMap(),
+        SizedBox(
+          height: 20,
+        ),
         CategoryText(),
       ],
     ));
   }
 }
-
