@@ -1,6 +1,8 @@
 import 'dart:io';
+
 import 'package:application/Screen/error_screen.dart';
 import 'package:application/Screen/main_screen.dart';
+import 'package:application/Screen/navigate_screen.dart';
 import 'package:application/api/notification_controller.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -76,6 +78,9 @@ class _MyAppState extends State<MyApp> {
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (context) => MainScreen());
+
+          case '/navigator-page':
+            return MaterialPageRoute(builder: (context) => NavigateScreen());
 
           case '/notification-page':
             return MaterialPageRoute(builder: (context) {
