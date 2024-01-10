@@ -1,4 +1,4 @@
-import 'package:application/Screen/booking_screen.dart';
+import 'package:application/Screen/booking_history_screen.dart';
 import 'package:application/Screen/comunity_screen.dart';
 import 'package:application/Screen/explore_screen.dart';
 import 'package:application/Screen/navigate_screen.dart';
@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   ExploreScreen(),
   NavigateScreen(),
   ComunityScreen(),
-  BookingScreen(),
+  BookingHistoryScreen(),
   ProfileScreen(),
  ];
 
