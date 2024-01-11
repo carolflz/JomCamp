@@ -27,10 +27,10 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
             ),
           ),
           centerTitle: true,
-          leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-          ),
+          // leading: IconButton(
+          //   onPressed: () => Navigator.pop(context),
+          //   icon: Icon(Icons.arrow_back, color: Colors.black),
+          // ),
           bottom: TabBar(
             labelColor: Colors.yellow.shade900,
             unselectedLabelColor: Colors.black,
