@@ -4,38 +4,61 @@ import 'package:intl/intl.dart';
 
 class BookingHistoryScreen extends StatefulWidget {
   @override
-  State<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
+  _BookingHistoryScreenState createState() => _BookingHistoryScreenState();
 }
 
 class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
   final Stream<QuerySnapshot<Map<String, dynamic>>> _userStream =
-    FirebaseFirestore.instance.collection('users').limit(1).snapshots();
+      FirebaseFirestore.instance.collection('users').limit(1).snapshots();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-          'Booking History',
-          style: TextStyle(
-            fontSize: 25.0,
-            letterSpacing: 2.0,
-            color: Colors.black,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text(
+            'Booking History',
+            style: TextStyle(
+              fontSize: 25.0,
+              letterSpacing: 2.0,
+              color: Colors.black,
+            ),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back, color: Colors.black),
+          ),
+          bottom: TabBar(
+            labelColor: Colors.yellow.shade900,
+            unselectedLabelColor: Colors.black,
+            isScrollable: true,
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(
+                  color: Colors.yellow.shade900,
+              ),
+            ),
+            tabs: [
+              Tab(text: 'Upcoming Bookings'),
+              Tab(text: 'Previous Bookings'),
+            ],
           ),
         ),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
+        body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          stream: _userStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var userDocuments = snapshot.data!.docs;
+              return buildBookingsTabs(userDocuments);
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return CircularProgressIndicator();
+            }
           },
-          icon: Icon(Icons.arrow_back),
-          color: Colors.black,
         ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-        child: buildBookingStream(), // Directly use the StreamBuilder here
       ),
     );
   }
@@ -49,70 +72,23 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
           (userDocument.data()?['bookings'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
       for (var booking in bookingDetails) {
-        String dateString = booking['date'] as String? ?? ''; // Safely cast and provide a fallback
-        if (dateString.isNotEmpty) {
-          try {
-            DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(dateString);
-            if (bookingDate.isAfter(DateTime.now())) {
-              upcomingBookings.add(booking);
-            } else {
-              previousBookings.add(booking);
-            }
-          } catch (e) {
-            // Handle parse error or log it
-            print('Error parsing date: $e');
-          }
+        DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(booking['date']);
+
+        if (bookingDate.isAfter(DateTime.now())) {
+          upcomingBookings.add(booking);
+        } else {
+          previousBookings.add(booking);
         }
       }
     }
 
     return Expanded(
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            TabBar(
-              labelColor: Colors.yellow.shade900,
-              unselectedLabelColor: Colors.black,
-              isScrollable: true,
-              indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(
-                  color: Colors.yellow.shade900,
-                ),
-              ),
-              labelPadding: EdgeInsets.symmetric(horizontal: 20),
-              tabs: [
-                Tab(text: 'Upcoming Bookings'),
-                Tab(text: 'Previous Bookings'),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  buildBookingsList(upcomingBookings, isUpcoming: true),
-                  buildBookingsList(previousBookings, isUpcoming: false),
-                ],
-              ),
-            ),
-          ],
-        ),
+      child: TabBarView(
+        children: [
+          buildBookingsList(upcomingBookings, isUpcoming: true),
+          buildBookingsList(previousBookings, isUpcoming: false),
+        ],
       ),
-    );
-  }
-
-  StreamBuilder<QuerySnapshot<Map<String, dynamic>>> buildBookingStream() {
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: _userStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          var userDocuments = snapshot.data!.docs;
-          return buildBookingsTabs(userDocuments);
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
     );
   }
 
@@ -166,6 +142,22 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
             ],
           ),
         );
+      },
+    );
+  }
+
+  StreamBuilder<QuerySnapshot<Map<String, dynamic>>> buildBookingStream() {
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: _userStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var userDocuments = snapshot.data!.docs;
+          return buildBookingsTabs(userDocuments);
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return CircularProgressIndicator();
+        }
       },
     );
   }
