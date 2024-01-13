@@ -3,9 +3,13 @@ import 'dart:io';
 import 'package:application/Screen/error_screen.dart';
 import 'package:application/Screen/main_screen.dart';
 import 'package:application/Screen/navigate_screen.dart';
+import 'package:application/Screen/rental_screen.dart';
+import 'package:application/Screen/payment_screen.dart';
+import 'package:application/api/cart_provider.dart';
 import 'package:application/api/notification_controller.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -36,7 +40,12 @@ void main() async {
     AwesomeNotifications().requestPermissionToSendNotifications();
   }
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => CartProvider(), // Create an instance of your data model
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -85,6 +94,16 @@ class _MyAppState extends State<MyApp> {
           case '/notification-page':
             return MaterialPageRoute(builder: (context) {
               return ErrorScreen();
+            });
+
+          case '/rental':
+            return MaterialPageRoute(builder: (context) {
+              return RentalScreen();
+            });
+          
+          case '/payment':
+            return MaterialPageRoute(builder: (context) {
+              return PaymentScreen();
             });
 
           default:
