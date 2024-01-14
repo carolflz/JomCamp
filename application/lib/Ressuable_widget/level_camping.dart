@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 
-class CategoryText extends StatelessWidget {
-  final Map<String, Color> categoryColor = {
-    'Forested': Color.fromARGB(255, 150, 212, 78),   // Light Green
-    'Riverside': Color.fromRGBO(92, 182, 255, 1),  // Light Blue
-    'Mountainous': Color.fromARGB(255, 253, 126, 117), // Light Red
-    'Family-friendly': Color.fromARGB(255, 236, 96, 143), // Light Pink
-    'Sunset-view': Color.fromARGB(255, 250, 196, 81), // Light Orange
+class LevelText extends StatelessWidget {
+  final Map<String, Color> levelColors = {
+    'Beginner': Colors.green.shade300,
+    'Intermediate': Colors.amber.shade300,
+    'Advanced': Colors.deepOrange.shade300,
   };
 
-  final List<String> _categoryLabels = [
-    'Forested',
-    'Riverside',
-    'Mountainous',
-    'Family-friendly',
-    'Sunset-view',
+  final List<String> _levelLabels = [
+    'Beginner',
+    'Intermediate',
+    'Advanced',
   ];
 
   @override
@@ -25,22 +21,22 @@ class CategoryText extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Categories',
+            'Levels',
             style: TextStyle(
               fontSize: 24,
             ),
           ),
           Container(
-            height: 35,
+            height: 40,
             child: Row(
               children: [
                 Expanded(
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: _categoryLabels.length,
+                    itemCount: _levelLabels.length,
                     itemBuilder: (context, index) {
-                      final category = _categoryLabels[index];
-                      final color = categoryColor[category] ?? Colors.grey; // Default color if not found
+                      final level = _levelLabels[index];
+                      final color = levelColors[level] ?? Colors.grey; // Default color if not found
 
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(5.0, 1.0, 10.0, 0),
@@ -49,7 +45,7 @@ class CategoryText extends StatelessWidget {
                           onPressed: () {},
                           label: Center(
                             child: Text(
-                              category,
+                              level,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
