@@ -1,0 +1,118 @@
+<mxfile host="app.diagrams.net" modified="2024-01-13T18:39:32.558Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" etag="BBwTgeoiaK4LBJXICDiw" version="22.1.18" type="device">
+  <diagram name="Page-1" id="tZDoOiyGgwRUR-xUaYzQ">
+    <mxGraphModel dx="1075" dy="515" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-2" value="" style="rounded=0.5;whiteSpace=wrap;html=1;fillColor=#F7F7F7;shadow=0;" parent="1" vertex="1">
+          <mxGeometry x="120" y="20" width="670" height="660" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-3" value="JomCamp" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;strokeColor=default;fillColor=#CCFFFF;" parent="1" vertex="1">
+          <mxGeometry x="130" y="40" width="650" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-5" value="Mobile Application" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;fillColor=#B9E0A5;" parent="1" vertex="1">
+          <mxGeometry x="140" y="120" width="380" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-6" value="Web Application" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;fillColor=#FFFFCC;" parent="1" vertex="1">
+          <mxGeometry x="600" y="120" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-7" value="&lt;font style=&quot;font-size: 11px;&quot;&gt;Internet&lt;br&gt;Connection&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;fillColor=#CC99FF;" parent="1" vertex="1">
+          <mxGeometry x="530" y="120" width="60" height="370" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-10" value="Internet Connection" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;fillColor=#CC99FF;" parent="1" vertex="1">
+          <mxGeometry x="140" y="500" width="630" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-11" value="Cloud Database Service" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;fillColor=#FFCC99;" parent="1" vertex="1">
+          <mxGeometry x="140" y="540" width="630" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-12" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#B9E0A5;" parent="1" vertex="1">
+          <mxGeometry x="140" y="160" width="380" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-13" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFCC;" parent="1" vertex="1">
+          <mxGeometry x="600" y="160" width="170" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-14" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFCC99;" parent="1" vertex="1">
+          <mxGeometry x="140" y="590" width="630" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-20" value="User Interface" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="625" y="170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-21" value="Administration" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="625" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-22" value="Campsite Database Manager" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="600" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-23" value="Booking Database Manager" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="320" y="600" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-24" value="Equipment Database Maneger" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="480" y="600" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-25" value="Community Post Database Manager" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="630" y="600" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-29" value="User Interface" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="150" y="170" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-30" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Campsite Module&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCFFCC;" parent="1" vertex="1">
+          <mxGeometry x="150" y="292.5" width="360" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-31" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Booking Module&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCFFCF;" parent="1" vertex="1">
+          <mxGeometry x="150" y="376" width="360" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-32" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Community Module&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCFFCC;" parent="1" vertex="1">
+          <mxGeometry x="150" y="195" width="170" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-33" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;User Module&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCFFCC;" parent="1" vertex="1">
+          <mxGeometry x="340" y="195" width="170" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-37" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCFFCC;" parent="1" vertex="1">
+          <mxGeometry x="150" y="325" width="360" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-34" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Campsite Rating&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="400" y="330" width="105" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-35" value="Campsite Alert System" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="150" y="460" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="dDQSR93xobCD2fB3V2nJ-34" target="dDQSR93xobCD2fB3V2nJ-34" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-40" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCFFCF;" parent="1" vertex="1">
+          <mxGeometry x="150" y="406" width="360" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-44" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Campsite Information&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="280" y="330" width="105" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-45" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Campsite Directory System&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="330" width="105" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-46" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Campsite Booking System&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="411" width="105" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-47" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Equipment Rental System&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="280" y="411" width="105" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-48" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Booking History System&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="398" y="411" width="105" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-50" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCFFCC;" parent="1" vertex="1">
+          <mxGeometry x="150" y="226" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-51" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCFFCC;" parent="1" vertex="1">
+          <mxGeometry x="340" y="226" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-52" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Forum Posting&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="238.5" width="70" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-53" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;User Interaction&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="238.5" width="70" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dDQSR93xobCD2fB3V2nJ-54" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;User&lt;/font&gt; &lt;font style=&quot;font-size: 9px;&quot;&gt;Information&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="352" y="238.5" width="148" height="35" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
