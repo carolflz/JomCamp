@@ -1,25 +1,11 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 // ignore: use_key_in_widget_constructors
 class CampsiteScreen extends StatelessWidget {
   // ignore: unnecessary_string_escapes
-  static const String routeName = '\Campsite';
-
-  Widget _rowHeader(String text, int flex) {
-    return Expanded(
-      flex: flex,
-      child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade700),
-            color: Colors.yellow.shade700),
-        child: Center(
-          child: Text(text,
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold)),
-        ),
-      ),
-    );
-  }
+  static const String routeName = '/Campsite';
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +23,6 @@ class CampsiteScreen extends StatelessWidget {
               ),
             ),
           ),
-          Row(
-            children: [
-              _rowHeader('Id', 1),
-              _rowHeader('Rental Info', 2),
-              _rowHeader('Username', 3),
-              _rowHeader('Rental Date', 4),
-              _rowHeader('Return Date', 5),
-              _rowHeader('Approval', 6),
-            ],
-          )
         ],
       ),
     );

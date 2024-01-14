@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:web_admin/class/constant.dart';
 import 'package:web_admin/screen/sidebar_screen/campsite_screen.dart';
-import 'package:web_admin/screen/sidebar_screen/dashboard_screen.dart';
 import 'package:web_admin/screen/sidebar_screen/rental_screen.dart';
 import 'package:web_admin/screen/sidebar_screen/reservation_screen.dart';
 
@@ -16,28 +17,23 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   // ignore: prefer_final_fields
-  Widget _selectedItem = DashboardScreen();
+  Widget _selectedItem = CampsiteScreen();
 
   screenSelector(item) {
     switch (item.route) {
-      case DashboardScreen.routeName:
-        setState(() {
-          _selectedItem = DashboardScreen();
-        });
-        break;
       case CampsiteScreen.routeName:
         setState(() {
           _selectedItem = CampsiteScreen();
         });
         break;
-      case ReservationScreen.routeName:
-        setState(() {
-          _selectedItem = ReservationScreen();
-        });
-        break;
       case RentalScreen.routeName:
         setState(() {
           _selectedItem = RentalScreen();
+        });
+        break;
+      case ReservationScreen.routeName:
+        setState(() {
+          _selectedItem = ReservationScreen();
         });
         break;
     }
@@ -48,27 +44,31 @@ class _MainScreenState extends State<MainScreen> {
     return AdminScaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.yellow.shade900,
-          title: const Text('Management'),
+          backgroundColor: primaryColor,
+          title: Center(
+            child: Text(
+              'JOMCAMP',
+              style: GoogleFonts.ubuntu(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white),
+            ),
+          ),
         ),
         sideBar: SideBar(
           items: const [
-            AdminMenuItem(
-                title: 'Dashboard',
-                icon: Icons.dashboard,
-                route: DashboardScreen.routeName),
             AdminMenuItem(
                 title: 'CampSite',
                 icon: Icons.location_on,
                 route: CampsiteScreen.routeName),
             AdminMenuItem(
-                title: 'Reservation',
-                icon: Icons.bookmark,
-                route: ReservationScreen.routeName),
-            AdminMenuItem(
-                title: 'Rental',
+                title: 'Rental Equipment',
                 icon: Icons.construction,
                 route: RentalScreen.routeName),
+            AdminMenuItem(
+                title: 'Campsite Reservation',
+                icon: Icons.bookmark,
+                route: ReservationScreen.routeName),
           ],
           selectedRoute: '',
           onSelected: (item) {
@@ -78,12 +78,13 @@ class _MainScreenState extends State<MainScreen> {
             height: 50,
             width: double.infinity,
             color: const Color(0xff444444),
-            child: const Center(
+            child: Center(
               child: Text(
-                'JomCamp Admin Panel',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
+                'Management',
+                style: GoogleFonts.ubuntu(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white),
               ),
             ),
           ),
@@ -93,10 +94,9 @@ class _MainScreenState extends State<MainScreen> {
             color: const Color(0xff444444),
             child: const Center(
               child: Text(
-                'footer',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
+                'By Group26',
+                style:
+                    TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
               ),
             ),
           ),

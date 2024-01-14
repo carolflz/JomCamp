@@ -1,54 +1,80 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:web_admin/widget/display.dart';
 
-class RentalScreen extends StatelessWidget {
-  const RentalScreen({Key? key}) : super(key: key);
-  // ignore: unnecessary_string_escapes
-  static const String routeName = '\Rental';
+class RentalScreen extends StatefulWidget {
+  const RentalScreen({super.key});
 
-  Widget _rowHeader(String text, int flex) {
-    return Expanded(
-      flex: flex,
-      child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade700),
-            color: Colors.yellow.shade700),
-        child: Center(
-          child: Text(text,
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold)),
-        ),
-      ),
-    );
+  static const String routeName = '/Rental';
+
+  @override
+  State<RentalScreen> createState() => _RentalScreenState();
+}
+
+class _RentalScreenState extends State<RentalScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  List<dynamic> equipmentList = [];
+
+  void fetchEquipment() async {
+    var userQuery =
+        await FirebaseFirestore.instance.collection('users').limit(1).get();
+    var userData = userQuery.docs.first.data();
+    setState(() {
+      equipmentList = userData['equipment'] ?? [];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEquipment();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.topLeft,
-            padding: const EdgeInsets.all(10),
-            child: const Text(
-              'Rental Screen',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 36,
-              ),
-            ),
-          ),
-          Row(
-            children: [
-              _rowHeader('Id', 1),
-              _rowHeader('Rental Info', 2),
-              _rowHeader('Username', 3),
-              _rowHeader('Rental Date', 4),
-              _rowHeader('Return Date', 5),
-              _rowHeader('Approval', 6),
-            ],
-          )
-        ],
-      ),
-    );
+    return Scaffold(
+        body: ListView(
+      children: [Display(), Display(), Display(), Display()],
+    ));
   }
+
+  // Widget buildCartItem(Map<String, dynamic> item) {
+  //   return ListTile(
+  //     title: Text('${item['name']}',
+  //         style: const TextStyle(fontSize: 18, color: Colors.black)),
+  //     subtitle: Text('Price: RM ${item['equipmentFee']}',
+  //         style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.5))),
+  //     trailing: Row(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         IconButton(
+  //           icon: Icon(Icons.remove),
+  //           onPressed: () {
+  //             updateQuantity(item, cartProvider, -1);
+  //           },
+  //           color: Colors.yellow.shade900,
+  //         ),
+  //         Text('${item['quantity']}',
+  //             style: TextStyle(fontSize: 18, color: Colors.white)),
+  //         IconButton(
+  //           icon: Icon(Icons.add),
+  //           onPressed: () {
+  //             updateQuantity(item, cartProvider, 1);
+  //           },
+  //           color: Colors.yellow.shade900,
+  //         ),
+  //         IconButton(
+  //           icon: Icon(Icons.delete),
+  //           onPressed: () {
+  //             removeItemFromCart(item, cartProvider);
+  //           },
+  //           color: Colors.yellow.shade900,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
