@@ -4,6 +4,7 @@ import 'package:application/Ressuable_widget/search_text_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:application/Ressuable_widget/google_map.dart';
+import 'package:application/Ressuable_widget/level_camping.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -34,6 +35,8 @@ class ExploreScreen extends StatelessWidget {
             height: 20,
           ),
           CategoryText(),
+          LevelText(),
+
         ],
       ),
     );
