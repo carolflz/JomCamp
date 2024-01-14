@@ -35,9 +35,9 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
             labelColor: Colors.yellow.shade900,
             unselectedLabelColor: Colors.black,
             isScrollable: true,
-              indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(
-                  color: Colors.yellow.shade900,
+            indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(
+                color: Colors.yellow.shade900,
               ),
             ),
             tabs: [
@@ -63,13 +63,16 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     );
   }
 
-  Widget buildBookingsTabs(List<QueryDocumentSnapshot<Map<String, dynamic>>> userDocuments) {
+  Widget buildBookingsTabs(
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> userDocuments) {
     List<Map<String, dynamic>> upcomingBookings = [];
     List<Map<String, dynamic>> previousBookings = [];
 
     for (var userDocument in userDocuments) {
       List<Map<String, dynamic>> bookingDetails =
-          (userDocument.data()?['bookings'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+          (userDocument.data()['bookings'] as List?)
+                  ?.cast<Map<String, dynamic>>() ??
+              [];
 
       for (var booking in bookingDetails) {
         DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(booking['date']);
@@ -92,13 +95,15 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     );
   }
 
-  Widget buildBookingsList(List<Map<String, dynamic>> bookings, {required bool isUpcoming}) {
+  Widget buildBookingsList(List<Map<String, dynamic>> bookings,
+      {required bool isUpcoming}) {
     return ListView.builder(
       itemCount: bookings.length,
       itemBuilder: (context, index) {
         var booking = bookings[index];
         return ListTile(
-          title: Text('${booking['campsite']}', style: TextStyle(fontSize: 18, color: Colors.black)),
+          title: Text('${booking['campsite']}',
+              style: TextStyle(fontSize: 18, color: Colors.black)),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -121,8 +126,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                       icon: Icon(Icons.edit),
                       label: Text('EDIT', style: TextStyle(fontSize: 12)),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.yellow.shade900,
-                        onPrimary: Colors.white,
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.yellow.shade900,
                       ),
                     ),
                     SizedBox(width: 8),
@@ -133,8 +138,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                       icon: Icon(Icons.delete),
                       label: Text('REMOVE', style: TextStyle(fontSize: 12)),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.yellow.shade900,
-                        onPrimary: Colors.white,
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.yellow.shade900,
                       ),
                     ),
                   ],
@@ -173,7 +178,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     if (newDate != null) {
       TimeOfDay? newTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.fromDateTime(DateFormat('dd/MM/yyyy').parse(booking['date'])),
+        initialTime: TimeOfDay.fromDateTime(
+            DateFormat('dd/MM/yyyy').parse(booking['date'])),
       );
 
       if (newTime != null) {
@@ -182,20 +188,23 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     }
   }
 
-  void updateBookingInFirestore(Map<String, dynamic> booking, DateTime newDate, TimeOfDay newTime) {
+  void updateBookingInFirestore(
+      Map<String, dynamic> booking, DateTime newDate, TimeOfDay newTime) {
     FirebaseFirestore.instance.collection('users').get().then((querySnapshot) {
       querySnapshot.docs.forEach((document) {
-        var userBookings = List<Map<String, dynamic>>.from(document.data()['bookings']);
+        var userBookings =
+            List<Map<String, dynamic>>.from(document.data()['bookings']);
 
         // Find the index of the booking to be updated
         int bookingIndex = userBookings.indexWhere((b) =>
             b['campsite'] == booking['campsite'] &&
             b['date'] == booking['date'] &&
             b['time'] == booking['time']);
-        
+
         if (bookingIndex != -1) {
           // Update the booking details
-          userBookings[bookingIndex]['date'] = DateFormat('dd/MM/yyyy').format(newDate);
+          userBookings[bookingIndex]['date'] =
+              DateFormat('dd/MM/yyyy').format(newDate);
           userBookings[bookingIndex]['time'] = '${newTime.format(context)}';
 
           // Update the document
@@ -208,7 +217,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
   void removeBooking(Map<String, dynamic> booking) {
     FirebaseFirestore.instance.collection('users').get().then((querySnapshot) {
       querySnapshot.docs.forEach((document) {
-        var userBookings = List<Map<String, dynamic>>.from(document.data()['bookings']);
+        var userBookings =
+            List<Map<String, dynamic>>.from(document.data()['bookings']);
 
         // Remove the booking
         userBookings.removeWhere((b) =>
@@ -221,5 +231,4 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
       });
     });
   }
-
 }

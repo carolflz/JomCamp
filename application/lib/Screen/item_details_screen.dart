@@ -91,7 +91,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
               fit: BoxFit.cover,
               width: double.infinity,
               height: 250,
-              errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 250), 
+              errorBuilder: (context, error, stackTrace) =>
+                  Icon(Icons.broken_image, size: 250),
             ),
             SizedBox(height: 20),
             Column(
@@ -223,46 +224,66 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       ElevatedButton(
                         child: Text("ADD TO CART"),
                         onPressed: () async {
-                          try {                         
+                          try {
                             QuerySnapshot<Map<String, dynamic>> userQuery =
-                                await FirebaseFirestore.instance.collection('users').get();
+                                await FirebaseFirestore.instance
+                                    .collection('users')
+                                    .get();
 
                             if (userQuery.docs.isNotEmpty) {
-                              DocumentSnapshot<Map<String, dynamic>> userDoc = userQuery.docs.first;
+                              DocumentSnapshot<Map<String, dynamic>> userDoc =
+                                  userQuery.docs.first;
 
                               if (userDoc.exists) {
-                                await FirebaseFirestore.instance.runTransaction((transaction) async {
-                                  DocumentSnapshot<Map<String, dynamic>> freshUserDoc =
+                                await FirebaseFirestore.instance
+                                    .runTransaction((transaction) async {
+                                  DocumentSnapshot<Map<String, dynamic>>
+                                      freshUserDoc =
                                       await transaction.get(userDoc.reference);
 
                                   cartProvider.addToCart(quantity);
 
-                                  if (freshUserDoc.data()!.containsKey('equipment')) {
-                                    List<Map<String, dynamic>> currentEquipmentList =
+                                  if (freshUserDoc
+                                      .data()!
+                                      .containsKey('equipment')) {
+                                    List<Map<String, dynamic>>
+                                        currentEquipmentList =
                                         List.from(freshUserDoc['equipment']);
 
                                     int index = currentEquipmentList.indexWhere(
-                                        (equipment) => equipment['id'] == widget.item.id);
+                                        (equipment) =>
+                                            equipment['id'] == widget.item.id);
 
                                     if (index != -1) {
-                                      currentEquipmentList[index]['quantity'] += quantity;
-                                      currentEquipmentList[index]['equipmentFee'] =
+                                      currentEquipmentList[index]['quantity'] +=
+                                          quantity;
+                                      currentEquipmentList[index]
+                                              ['equipmentFee'] =
                                           (widget.item['Rental Price'] as int) *
-                                              currentEquipmentList[index]['quantity'];
+                                              currentEquipmentList[index]
+                                                  ['quantity'];
                                     } else {
                                       currentEquipmentList.add({
                                         'id': widget.item.id,
                                         'name': widget.item['Item Name'],
                                         'price': widget.item['Rental Price'],
                                         'quantity': quantity,
-                                        'equipmentFee':
-                                            (widget.item['Rental Price'] as int) * quantity,
+                                        'equipmentFee': (widget
+                                                .item['Rental Price'] as int) *
+                                            quantity,
                                       });
                                     }
 
-                                    int newTotalEquipmentFee = currentEquipmentList
-                                        .map<int>((equipment) => equipment['equipmentFee'] as int)
-                                        .fold(0, (prev, current) => prev + current);
+                                    int newTotalEquipmentFee =
+                                        currentEquipmentList
+                                            .map<int>(
+                                                (equipment) =>
+                                                    equipment['equipmentFee']
+                                                        as int)
+                                            .fold(
+                                                0,
+                                                (prev, current) =>
+                                                    prev + current);
 
                                     transaction.update(userDoc.reference, {
                                       'equipment': currentEquipmentList,
@@ -277,10 +298,14 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                           'price': widget.item['Rental Price'],
                                           'quantity': quantity,
                                           'equipmentFee':
-                                              (widget.item['Rental Price'] as int) * quantity,
+                                              (widget.item['Rental Price']
+                                                      as int) *
+                                                  quantity,
                                         },
                                       ],
-                                      'totalEquipmentFee': (widget.item['Rental Price'] as int) * quantity,
+                                      'totalEquipmentFee':
+                                          (widget.item['Rental Price'] as int) *
+                                              quantity,
                                     });
                                   }
                                 });
@@ -295,11 +320,12 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
                           padding: EdgeInsets.all(10.0),
+                          backgroundColor: Colors.yellow.shade900,
                           fixedSize: Size(200, 50),
-                          textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
-                          primary: Colors.yellow.shade900,
-                          onPrimary: Colors.white,
+                          textStyle:
+                              TextStyle(fontSize: 18, letterSpacing: 5.0),
                           shape: StadiumBorder(),
                         ),
                       ),
@@ -310,11 +336,12 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           Navigator.pushNamed(context, '/rental');
                         },
                         style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
                           padding: EdgeInsets.all(10.0),
+                          backgroundColor: Colors.yellow.shade900,
                           fixedSize: Size(200, 50),
-                          textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
-                          primary: Colors.yellow.shade900,
-                          onPrimary: Colors.white,
+                          textStyle:
+                              TextStyle(fontSize: 18, letterSpacing: 5.0),
                           shape: StadiumBorder(),
                         ),
                       ),

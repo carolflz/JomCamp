@@ -10,7 +10,6 @@ class BookingScreen extends StatefulWidget {
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-
   late DateTime selectedDate;
   late TimeOfDay selectedTime;
   String campsiteName = '';
@@ -27,17 +26,21 @@ class _BookingScreenState extends State<BookingScreen> {
   Future<void> fetchCampsiteInfo() async {
     try {
       // Fetch the first document from the 'users' collection
-      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance.collection('users').limit(1).get();
+      QuerySnapshot<Map<String, dynamic>> userQuery =
+          await FirebaseFirestore.instance.collection('users').limit(1).get();
 
       if (userQuery.docs.isNotEmpty) {
         DocumentSnapshot<Map<String, dynamic>> userDoc = userQuery.docs.first;
-        List<Map<String, dynamic>> bookingDetails = 
-            (userDoc.data()?['bookings'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+        List<Map<String, dynamic>> bookingDetails =
+            (userDoc.data()?['bookings'] as List?)
+                    ?.cast<Map<String, dynamic>>() ??
+                [];
 
         if (bookingDetails.isNotEmpty) {
           setState(() {
-            campsiteName = bookingDetails.last['campsite'] ?? 'No campsite name found';
-            imageUrl = bookingDetails.last['image'] ?? ''; 
+            campsiteName =
+                bookingDetails.last['campsite'] ?? 'No campsite name found';
+            imageUrl = bookingDetails.last['image'] ?? '';
           });
         }
       }
@@ -47,7 +50,9 @@ class _BookingScreenState extends State<BookingScreen> {
         imageUrl = 'Error loading campsite image';
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load campsite details. Please try again later.')),
+        SnackBar(
+            content: Text(
+                'Failed to load campsite details. Please try again later.')),
       );
     }
   }
@@ -83,16 +88,16 @@ class _BookingScreenState extends State<BookingScreen> {
             SizedBox(
               height: 250,
               width: double.infinity,
-              child: imageUrl.isNotEmpty 
-                ? Image.network(imageUrl, fit: BoxFit.cover)
-                : Container( 
-                    color: Colors.yellow.shade900,
-                    child: Icon(Icons.image, size: 128, color: Colors.white),
-                  ),
+              child: imageUrl.isNotEmpty
+                  ? Image.network(imageUrl, fit: BoxFit.cover)
+                  : Container(
+                      color: Colors.yellow.shade900,
+                      child: Icon(Icons.image, size: 128, color: Colors.white),
+                    ),
             ),
             SizedBox(height: 14.0),
             Text(
-              '$campsiteName', 
+              '$campsiteName',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -118,39 +123,38 @@ class _BookingScreenState extends State<BookingScreen> {
                     }
                   },
                   icon: Icon(Icons.calendar_month_outlined),
-                  label: Text(' SELECT DATE    -    ${selectedDate.day} / ${selectedDate.month} / ${selectedDate.year} '),
+                  label: Text(
+                      ' SELECT DATE    -    ${selectedDate.day} / ${selectedDate.month} / ${selectedDate.year} '),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.yellow.shade900,
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.yellow.shade900,
                   ),
                 ),
               ],
             ),
             SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[            
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    final TimeOfDay? timeOfDay = await showTimePicker(
-                      context: context,
-                      initialTime: selectedTime,
-                    );
-                    if (timeOfDay != null) {
-                      setState(() {
-                        selectedTime = timeOfDay;
-                      });
-                    }
-                  },
-                  icon: Icon(Icons.access_time),
-                  label: Text('   SELECT TIME    -    ${selectedTime.format(context)}    '),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.yellow.shade900,
-                    onPrimary: Colors.white,
-                  ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final TimeOfDay? timeOfDay = await showTimePicker(
+                    context: context,
+                    initialTime: selectedTime,
+                  );
+                  if (timeOfDay != null) {
+                    setState(() {
+                      selectedTime = timeOfDay;
+                    });
+                  }
+                },
+                icon: Icon(Icons.access_time),
+                label: Text(
+                    '   SELECT TIME    -    ${selectedTime.format(context)}    '),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.yellow.shade900,
                 ),
-              ]
-            ),
+              ),
+            ]),
             SizedBox(height: 10.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -164,8 +168,8 @@ class _BookingScreenState extends State<BookingScreen> {
                   icon: Icon(Icons.shopping_cart),
                   label: Text('ADD CAMPING EQUIPMENT ($cartCounter)'),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.yellow.shade900,
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.yellow.shade900,
                   ),
                 ),
               ],
@@ -178,28 +182,29 @@ class _BookingScreenState extends State<BookingScreen> {
                   ElevatedButton(
                     child: Text("CONFIRM"),
                     onPressed: () async {
-                      await updateBooking(selectedDate, selectedTime.format(context));
+                      await updateBooking(
+                          selectedDate, selectedTime.format(context));
                       Navigator.pushNamed(context, '/payment');
                     },
                     style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
                       padding: EdgeInsets.all(10.0),
+                      backgroundColor: Colors.yellow.shade900,
                       fixedSize: Size(200, 50),
                       textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
-                      primary: Colors.yellow.shade900,
-                      onPrimary: Colors.white,
                       shape: StadiumBorder(),
                     ),
                   ),
-                  SizedBox(height: 18.0),             
+                  SizedBox(height: 18.0),
                   ElevatedButton(
                     child: Text("CANCEL"),
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
                       padding: EdgeInsets.all(10.0),
+                      backgroundColor: Colors.yellow.shade900,
                       fixedSize: Size(200, 50),
                       textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
-                      primary: Colors.yellow.shade900,
-                      onPrimary: Colors.white,
                       shape: StadiumBorder(),
                     ),
                   ),
@@ -222,7 +227,8 @@ class _BookingScreenState extends State<BookingScreen> {
       var rawBookings = userDoc.data()?['bookings'];
       List<Map<String, dynamic>> existingBookings;
       if (rawBookings is List<dynamic>) {
-        existingBookings = rawBookings.map((item) => item as Map<String, dynamic>).toList();
+        existingBookings =
+            rawBookings.map((item) => item as Map<String, dynamic>).toList();
       } else {
         existingBookings = <Map<String, dynamic>>[];
       }

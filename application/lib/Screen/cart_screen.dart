@@ -18,8 +18,9 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void fetchEquipment() async {
-    var userQuery = await FirebaseFirestore.instance.collection('users').limit(1).get();
-    var userData = userQuery.docs.first.data() as Map<String, dynamic>;
+    var userQuery =
+        await FirebaseFirestore.instance.collection('users').limit(1).get();
+    var userData = userQuery.docs.first.data();
     setState(() {
       equipmentList = userData['equipment'] ?? [];
     });
@@ -32,19 +33,22 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Shopping Cart', style: TextStyle(fontSize: 25.0, letterSpacing: 2.0, color: Colors.white)),
+        title: Text('Shopping Cart',
+            style: TextStyle(
+                fontSize: 25.0, letterSpacing: 2.0, color: Colors.white)),
         centerTitle: true,
-        leading: IconButton(onPressed: () { 
-          Navigator.pop(context);
-        }, 
-        icon: Icon(
-          Icons.arrow_back
-        ), 
-        color: Colors.yellow.shade900,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back),
+          color: Colors.yellow.shade900,
         ),
       ),
       body: equipmentList.isEmpty
-          ? Center(child: Text('No items in the cart', style: TextStyle(color: Colors.black)))
+          ? Center(
+              child: Text('No items in the cart',
+                  style: TextStyle(color: Colors.black)))
           : ListView.builder(
               itemCount: equipmentList.length,
               itemBuilder: (context, index) {
@@ -57,29 +61,32 @@ class _CartScreenState extends State<CartScreen> {
 
   Widget buildCartItem(Map<String, dynamic> item, CartProvider cartProvider) {
     return ListTile(
-      title: Text('${item['name']}', style: TextStyle(fontSize: 18, color: Colors.black)),
-      subtitle: Text('Price: RM ${item['equipmentFee']}', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.5))),
+      title: Text('${item['name']}',
+          style: TextStyle(fontSize: 18, color: Colors.black)),
+      subtitle: Text('Price: RM ${item['equipmentFee']}',
+          style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.5))),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
             icon: Icon(Icons.remove),
-            onPressed: () { 
+            onPressed: () {
               updateQuantity(item, cartProvider, -1);
             },
             color: Colors.yellow.shade900,
           ),
-          Text('${item['quantity']}', style: TextStyle(fontSize: 18, color: Colors.white)),
+          Text('${item['quantity']}',
+              style: TextStyle(fontSize: 18, color: Colors.white)),
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: () { 
+            onPressed: () {
               updateQuantity(item, cartProvider, 1);
             },
             color: Colors.yellow.shade900,
           ),
           IconButton(
             icon: Icon(Icons.delete),
-            onPressed: () { 
+            onPressed: () {
               removeItemFromCart(item, cartProvider);
             },
             color: Colors.yellow.shade900,
@@ -89,12 +96,13 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  void updateQuantity(Map<String, dynamic> item, CartProvider cartProvider, int change) async {
+  void updateQuantity(
+      Map<String, dynamic> item, CartProvider cartProvider, int change) async {
     var newQuantity = item['quantity'] + change;
-    if (newQuantity <= 0) 
-      return;
+    if (newQuantity <= 0) return;
 
-    var userQuery = await FirebaseFirestore.instance.collection('users').limit(1).get();
+    var userQuery =
+        await FirebaseFirestore.instance.collection('users').limit(1).get();
     var userDoc = userQuery.docs.first;
 
     FirebaseFirestore.instance.runTransaction((transaction) async {
@@ -108,12 +116,14 @@ class _CartScreenState extends State<CartScreen> {
       }
     }).then((_) {
       cartProvider.addToCart(change);
-      fetchEquipment(); 
+      fetchEquipment();
     });
   }
 
-  void removeItemFromCart(Map<String, dynamic> item, CartProvider cartProvider) async {
-    var userQuery = await FirebaseFirestore.instance.collection('users').limit(1).get();
+  void removeItemFromCart(
+      Map<String, dynamic> item, CartProvider cartProvider) async {
+    var userQuery =
+        await FirebaseFirestore.instance.collection('users').limit(1).get();
     var userDoc = userQuery.docs.first;
 
     FirebaseFirestore.instance.runTransaction((transaction) async {
@@ -124,7 +134,7 @@ class _CartScreenState extends State<CartScreen> {
       transaction.update(userDoc.reference, {'equipment': equipmentList});
     }).then((_) {
       cartProvider.addToCart(-item['quantity']);
-      fetchEquipment(); 
+      fetchEquipment();
     });
   }
 }

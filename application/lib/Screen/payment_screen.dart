@@ -9,7 +9,7 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   late Stream<QuerySnapshot<Map<String, dynamic>>> _userStream;
-  int deliveryFee = 5; 
+  int deliveryFee = 5;
   int equipmentFee = 0;
   int totalFee = 0;
   List<Map<String, dynamic>> equipmentList = [];
@@ -39,34 +39,39 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Widget buildBookingInfo(List<QueryDocumentSnapshot<Map<String, dynamic>>> userDocuments) {
-    var latestUserDocument = userDocuments.isNotEmpty ? userDocuments.last : null;
+  Widget buildBookingInfo(
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> userDocuments) {
+    var latestUserDocument =
+        userDocuments.isNotEmpty ? userDocuments.last : null;
 
     List<Map<String, dynamic>> bookingDetails =
-        (latestUserDocument?.data()?['bookings'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+        (latestUserDocument?.data()['bookings'] as List?)
+                ?.cast<Map<String, dynamic>>() ??
+            [];
 
     var latestBooking = bookingDetails.isNotEmpty ? bookingDetails.last : null;
 
     return latestBooking != null
-        ? 
-        ListTile(
-          title: Text('${latestBooking['campsite']}', style: TextStyle(fontSize: 18, color: Colors.black)),
-          subtitle: Text(
-            'Date: ${latestBooking['date']}\nTime: ${latestBooking['time']}',
-            style: TextStyle(fontSize: 16, color: Colors.black),
-          ),
-        )
-        : 
-        ListTile(
-          title: Text('No Booking', style: TextStyle(color: Colors.black)),
-        );
+        ? ListTile(
+            title: Text('${latestBooking['campsite']}',
+                style: TextStyle(fontSize: 18, color: Colors.black)),
+            subtitle: Text(
+              'Date: ${latestBooking['date']}\nTime: ${latestBooking['time']}',
+              style: TextStyle(fontSize: 16, color: Colors.black),
+            ),
+          )
+        : ListTile(
+            title: Text('No Booking', style: TextStyle(color: Colors.black)),
+          );
   }
 
   void fetchCartItems() async {
-    var userQuery = await FirebaseFirestore.instance.collection('users').limit(1).get();
-    var userData = userQuery.docs.first.data() as Map<String, dynamic>;
+    var userQuery =
+        await FirebaseFirestore.instance.collection('users').limit(1).get();
+    var userData = userQuery.docs.first.data();
     setState(() {
-      equipmentList = List<Map<String, dynamic>>.from(userData['equipment'] ?? []);
+      equipmentList =
+          List<Map<String, dynamic>>.from(userData['equipment'] ?? []);
       equipmentFee = userData['totalEquipmentFee'] ?? 0;
       totalFee = equipmentFee + deliveryFee;
     });
@@ -80,8 +85,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
       itemBuilder: (context, index) {
         var item = equipmentList[index];
         return ListTile(
-          title: Text('${item['name']} x ${item['quantity']}', style: TextStyle(color: Colors.black)),
-          subtitle: Text('Price: RM ${item['equipmentFee']}', style: TextStyle(color: Colors.black.withOpacity(0.5))),
+          title: Text('${item['name']} x ${item['quantity']}',
+              style: TextStyle(color: Colors.black)),
+          subtitle: Text('Price: RM ${item['equipmentFee']}',
+              style: TextStyle(color: Colors.black.withOpacity(0.5))),
         );
       },
     );
@@ -93,13 +100,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         SizedBox(height: 20),
-        Text('Campsite Fee     : RMXX.XX', style: TextStyle(fontSize: 16, color: Colors.black)),
-        Text('Equipment Fee   : RM $equipmentFee.00', style: TextStyle(fontSize: 16, color: Colors.black)),
-        Text('Delivery Fee        : RM $deliveryFee.00', style: TextStyle(fontSize: 16, color: Colors.black)),
+        Text('Campsite Fee     : RMXX.XX',
+            style: TextStyle(fontSize: 16, color: Colors.black)),
+        Text('Equipment Fee   : RM $equipmentFee.00',
+            style: TextStyle(fontSize: 16, color: Colors.black)),
+        Text('Delivery Fee        : RM $deliveryFee.00',
+            style: TextStyle(fontSize: 16, color: Colors.black)),
         Container(
-          margin: EdgeInsets.symmetric(vertical: 10.0),
-          child: const Divider(thickness: 2)),
-        Text('Total Fee            : RM $totalFee.00', style: TextStyle(fontSize: 16, color: Colors.black)),
+            margin: EdgeInsets.symmetric(vertical: 10.0),
+            child: const Divider(thickness: 2)),
+        Text('Total Fee            : RM $totalFee.00',
+            style: TextStyle(fontSize: 16, color: Colors.black)),
       ],
     );
   }
@@ -109,7 +120,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Payment', style: TextStyle(fontSize: 25.0, letterSpacing: 2.0, color: Colors.black)),
+        title: Text('Payment',
+            style: TextStyle(
+                fontSize: 25.0, letterSpacing: 2.0, color: Colors.black)),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
@@ -136,11 +149,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => PaypalCheckout(
                           sandboxMode: true,
-                          clientId: "AchNfiVRLO77ypi4ygKbrkfuTrw6VsBmpZfYYe-Jzn79U1XUZ6yEDUtyUtoiFL-Na2jSwDh2yc65Ydb0",
-                          secretKey: "EDMVGkkcx4ISmeFaZqkT4DdbS7ovkZnn9_eNuPmqg6SSlLvsucttVspHe4aIZWFLxkwVSLD7G6KWk52Z",
+                          clientId:
+                              "AchNfiVRLO77ypi4ygKbrkfuTrw6VsBmpZfYYe-Jzn79U1XUZ6yEDUtyUtoiFL-Na2jSwDh2yc65Ydb0",
+                          secretKey:
+                              "EDMVGkkcx4ISmeFaZqkT4DdbS7ovkZnn9_eNuPmqg6SSlLvsucttVspHe4aIZWFLxkwVSLD7G6KWk52Z",
                           returnURL: "success.snippetcoder.com",
                           cancelURL: "cancel.snippetcoder.com",
                           transactions: [
@@ -154,7 +169,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   "delivery fee": "$deliveryFee",
                                 }
                               },
-                              "description": "The payment transaction description.",
+                              "description":
+                                  "The payment transaction description.",
                               // "payment_options": {
                               //   "allowed_payment_method":
                               //       "INSTANT_FUNDING_SOURCE"
@@ -175,17 +191,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               //     }
                               //   ],
 
-                                // shipping address is not required though
-                                //   "shipping_address": {
-                                //     "recipient_name": "Raman Singh",
-                                //     "line1": "Delhi",
-                                //     "line2": "",
-                                //     "city": "Delhi",
-                                //     "country_code": "IN",
-                                //     "postal_code": "11001",
-                                //     "phone": "+00000000",
-                                //     "state": "Texas"
-                                //  },
+                              // shipping address is not required though
+                              //   "shipping_address": {
+                              //     "recipient_name": "Raman Singh",
+                              //     "line1": "Delhi",
+                              //     "line2": "",
+                              //     "city": "Delhi",
+                              //     "country_code": "IN",
+                              //     "postal_code": "11001",
+                              //     "phone": "+00000000",
+                              //     "state": "Texas"
+                              //  },
                               // }
                             }
                           ],
@@ -204,11 +220,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ));
                     },
                     style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
                       padding: EdgeInsets.all(10.0),
+                      backgroundColor: Colors.yellow.shade900,
                       fixedSize: Size(200, 50),
                       textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
-                      primary: Colors.yellow.shade900,
-                      onPrimary: Colors.white,
                       shape: StadiumBorder(),
                     ),
                     child: Text("CHECKOUT"),
@@ -220,11 +236,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
                       padding: EdgeInsets.all(10.0),
+                      backgroundColor: Colors.yellow.shade900,
                       fixedSize: Size(200, 50),
                       textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
-                      primary: Colors.yellow.shade900,
-                      onPrimary: Colors.white,
                       shape: StadiumBorder(),
                     ),
                   ),
