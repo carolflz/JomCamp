@@ -44,12 +44,12 @@ class _MainScreenState extends State<MainScreen> {
               label: 'Explore',
             ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.cart_fill),
-              label: 'Navigator',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.chat_bubble_2),
               label: 'Community',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.cart_fill),
+              label: 'Equipment',
             ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.bookmark),
