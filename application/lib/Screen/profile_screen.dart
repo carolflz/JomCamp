@@ -1,7 +1,6 @@
-import 'package:application/Ressuable_widget/number_widget.dart';
+import 'package:application/Ressuable_widget/profile_menu.dart';
+import 'package:application/Ressuable_widget/section_heading.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_stars/flutter_rating_stars.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,16 +13,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
   final double coverHeight = 280;
   final double profileHeight = 144;
-  TabController? _tabController;
-  var listImage = [];
-  List<double> ratings = [0.1, 0.3, 0.5, 0.7, 0.9];
   double value = 3.5;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,133 +60,42 @@ class _ProfileScreenState extends State<ProfileScreen>
           height: 16,
         ),
         Divider(),
-        const SizedBox(
-          height: 16,
+        TSectionHeading(
+          title: 'Profile Information',
+          showActionButton: false,
         ),
-        NumbersWidget(),
         const SizedBox(
-          height: 16,
+          height: 5,
         ),
+        TProfileMenu(onPressed: () {}, title: 'Name', value: 'James Jordan'),
+        const SizedBox(
+          height: 8,
+        ),
+        TProfileMenu(onPressed: () {}, title: 'Username', value: 'Noodbist'),
         Divider(),
-        Container(
-          child: Align(
-            alignment: Alignment.center,
-            child: TabBar(
-                controller: _tabController,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-                indicator: CircleTabIndicator(color: Colors.black, radius: 4),
-                tabs: [
-                  Tab(
-                    text: 'Feed',
-                  ),
-                  Tab(
-                    text: 'Photo',
-                  ),
-                  Tab(
-                    text: 'Review',
-                  ),
-                ]),
-          ),
+        TSectionHeading(
+          title: 'Personal Information',
+          showActionButton: false,
         ),
         const SizedBox(
-          height: 16,
+          height: 8,
         ),
-        Container(
-          width: double.maxFinite,
-          height: 300,
-          child: TabBarView(controller: _tabController, children: [
-            Center(child: Text("You don't have any Feed")),
-            Center(child: Text("You don't have any Pictures")),
-            Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "4.5",
-                            style: TextStyle(fontSize: 48.0),
-                          ),
-                          TextSpan(
-                            text: "/5",
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              color: Colors.blue,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    RatingStars(
-                      value: value,
-                      onValueChanged: (v) {
-                        setState(() {
-                          value = v;
-                        });
-                      },
-                      starCount: 5,
-                      starSize: 20,
-                      valueLabelColor: const Color(0xff9b9b9b),
-                      valueLabelTextStyle: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 12.0),
-                      valueLabelRadius: 10,
-                      maxValue: 5,
-                      starSpacing: 2,
-                      maxValueVisibility: true,
-                      valueLabelVisibility: true,
-                      animationDuration: Duration(milliseconds: 1000),
-                      valueLabelPadding: const EdgeInsets.symmetric(
-                          vertical: 1, horizontal: 8),
-                      valueLabelMargin: const EdgeInsets.only(right: 8),
-                      starOffColor: const Color(0xffe7e8ea),
-                      starColor: Colors.yellow,
-                    ),
-                    SizedBox(height: 16.0),
-                  ],
-                ),
-                Container(
-                  width: 200.0,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    reverse: true,
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return Row(
-                        children: [
-                          Text(
-                            "${index + 1}",
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                          SizedBox(height: 4.0),
-                          Icon(Icons.star, color: Colors.orange),
-                          SizedBox(height: 8.0),
-                          LinearPercentIndicator(
-                            lineHeight: 6.0,
-                            // linearStrokeCap: LinearStrokeCap.roundAll,
-                            width: MediaQuery.of(context).size.width / 2.8,
-                            animation: true,
-                            animationDuration: 2500,
-                            percent: ratings[index],
-                            progressColor: Colors.orange,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                )
-              ],
-            ),
-          ]),
-        ),
+        TProfileMenu(
+            onPressed: () {}, title: 'E-mail', value: 'james23@gmail.com'),
         const SizedBox(
-          height: 32,
-        )
+          height: 8,
+        ),
+        TProfileMenu(
+            onPressed: () {}, title: 'Phone Number', value: '+6012-345 6789'),
+        const SizedBox(
+          height: 8,
+        ),
+        TProfileMenu(onPressed: () {}, title: 'Gender', value: 'Male'),
+        const SizedBox(
+          height: 8,
+        ),
+        TProfileMenu(
+            onPressed: () {}, title: 'Date of Birth', value: '12 Dec, 2002'),
       ]);
 
   Widget buildCoverImage() => Container(
