@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:web_admin/screen/add_campsite_screen.dart';
 import 'package:web_admin/widget/display.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -28,6 +30,32 @@ class _CampsiteScreenState extends State<CampsiteScreen> {
                       fontWeight: FontWeight.w700,
                       fontSize: 28,
                     )),
+                SizedBox(
+                  width: 850,
+                ),
+                SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddCampsiteScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orangeAccent,
+                        side: BorderSide.none,
+                        shape: const StadiumBorder()),
+                    child: Center(
+                      child: Text(
+                        'Add Campsite',
+                        style: GoogleFonts.ubuntu(
+                            fontWeight: FontWeight.w600, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
             DisplayWidget(),
