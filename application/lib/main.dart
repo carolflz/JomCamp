@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:application/Screen/error_screen.dart';
 import 'package:application/Screen/main_screen.dart';
 import 'package:application/Screen/navigate_screen.dart';
@@ -42,7 +41,8 @@ void main() async {
 
   runApp(
     ChangeNotifierProvider(
-      create: (context) => CartProvider(), // Create an instance of your data model
+      create: (context) =>
+          CartProvider(), // Create an instance of your data model
       child: const MyApp(),
     ),
   );
@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(builder: (context) {
               return RentalScreen();
             });
-          
+
           case '/payment':
             return MaterialPageRoute(builder: (context) {
               return PaymentScreen();

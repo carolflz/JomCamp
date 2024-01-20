@@ -16,7 +16,7 @@ class MyMap extends StatefulWidget {
 class MyMapState extends State<MyMap> {
   late GoogleMapController mapController;
 
-  final LatLng _center = const LatLng(5.2632, 100.4846);
+  final LatLng _center = const LatLng(5.397781363395903, 100.31131339912291);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -581,7 +581,7 @@ Future<void> launchMaps(double lat, double lng) async {
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
           target: _center,
-          zoom: 11.0,
+          zoom: 12.0,
         ),
         markers: Set<Marker>.of(allMarkers),
         onTap: (LatLng latLng) {
