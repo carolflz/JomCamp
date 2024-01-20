@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:web_admin/class/constant.dart';
 import 'package:web_admin/screen/sidebar_screen/campsite_screen.dart';
 import 'package:web_admin/screen/sidebar_screen/rental_screen.dart';
@@ -59,15 +60,15 @@ class _MainScreenState extends State<MainScreen> {
           items: const [
             AdminMenuItem(
                 title: 'CampSite',
-                icon: Icons.location_on,
+                icon: LineAwesomeIcons.campground,
                 route: CampsiteScreen.routeName),
             AdminMenuItem(
                 title: 'Rental Equipment',
-                icon: Icons.construction,
+                icon: LineAwesomeIcons.binoculars,
                 route: RentalScreen.routeName),
             AdminMenuItem(
-                title: 'Campsite Reservation',
-                icon: Icons.bookmark,
+                title: 'Campsite Booking',
+                icon: LineAwesomeIcons.alternate_map_marked,
                 route: ReservationScreen.routeName),
           ],
           selectedRoute: '',

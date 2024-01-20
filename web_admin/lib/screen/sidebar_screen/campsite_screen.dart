@@ -21,11 +21,15 @@ class _CampsiteScreenState extends State<CampsiteScreen> {
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
-            Text('Reservation Screen',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 36,
-                )),
+            Row(
+              children: [
+                Text('Campsite Screen',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 28,
+                    )),
+              ],
+            ),
             DisplayWidget(),
           ],
         ));

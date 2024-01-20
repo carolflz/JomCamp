@@ -2,6 +2,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:web_admin/screen/update_screen.dart';
 
 class DisplayWidget extends StatelessWidget {
   const DisplayWidget({super.key});
@@ -13,6 +15,14 @@ class DisplayWidget extends StatelessWidget {
           .collection('google_map_campsites')
           .snapshots(),
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+
+        if (!snapshot.hasData) {
+          return const CircularProgressIndicator();
+        }
+
         var items = snapshot.data!.docs;
         int counter = 1;
         return Column(
@@ -70,7 +80,7 @@ class Display extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String id = item.id;
+    final String id = item.id;
     String title = item['Name'];
     String address = item['Address'];
     String level = item['Level'];
@@ -135,7 +145,6 @@ class Display extends StatelessWidget {
                   children: <Widget>[
                     // Add a spacer to push the buttons to the right side of the card
                     const Spacer(),
-                    // Add a text button labeled "SHARE" with transparent foreground color and an accent color for the text
                     TextButton(
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.transparent,
@@ -144,9 +153,17 @@ class Display extends StatelessWidget {
                         "EDIT",
                         style: TextStyle(color: Colors.blueAccent),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UpdateScreen(
+                                    objId: id,
+                                  )),
+                        );
+                      },
                     ),
-                    // Add a text button labeled "EXPLORE" with transparent foreground color and an accent color for the text
+                    // Add a text button labeled "SHARE" with transparent foreground color and an accent color for the text
                     TextButton(
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.transparent,
@@ -158,6 +175,10 @@ class Display extends StatelessWidget {
                       onPressed: () {
                         Widget comfirmBut = TextButton(
                             onPressed: () {
+                              FirebaseFirestore.instance
+                                  .collection('google_map_campsites')
+                                  .doc(id)
+                                  .delete();
                               Navigator.of(context).pop();
                             },
                             child: const Text('Comfirm'));
@@ -168,15 +189,33 @@ class Display extends StatelessWidget {
                             },
                             child: const Text('Close'));
 
-                        showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                                  actions: [closeBut, comfirmBut],
-                                  title: const Text('Delete Comfirmation'),
-                                  contentPadding: const EdgeInsets.all(20),
-                                  content: const Text(
-                                      'Are you sure you want to delete this item?\n\nThis action cannot be undone. Please confirm if you want to proceed with deleting this data.'),
-                                ));
+                        QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.confirm,
+                          title: 'Delete Comfirmation',
+                          text:
+                              'This action cannot be undone. Please confirm if you want to proceed with deleting this data.',
+                          confirmBtnText: 'Yes',
+                          confirmBtnColor: Colors.green,
+                          onConfirmBtnTap: () {
+                            FirebaseFirestore.instance
+                                .collection('google_map_campsites')
+                                .doc(id)
+                                .delete();
+                            Navigator.of(context).pop();
+                          },
+                          cancelBtnText: 'No',
+                        );
+
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (context) => AlertDialog(
+                        //           actions: [closeBut, comfirmBut],
+                        //           title: const Text('Delete Comfirmation'),
+                        //           contentPadding: const EdgeInsets.all(20),
+                        //           content: const Text(
+                        //               'Are you sure you want to delete this item?\n\nThis action cannot be undone. Please confirm if you want to proceed with deleting this data.'),
+                        //         ));
                       },
                     ),
                   ],

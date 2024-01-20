@@ -40,6 +40,8 @@ dependencies:
   cloud_firestore: ^4.13.6
   flutter_admin_scaffold: ^1.2.0
   google_fonts: ^6.1.0
+  line_awesome_flutter: ^2.0.0
+  quickalert: ^1.0.2  
 
 dev_dependencies:
   flutter_test:
@@ -51,6 +53,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
