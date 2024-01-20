@@ -6,11 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:application/Ressuable_widget/google_map.dart';
 import 'package:application/Ressuable_widget/level_camping.dart';
 
-class ExploreScreen extends StatelessWidget {
+class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
 
   @override
+  State<ExploreScreen> createState() => _ExploreScreenState();
+}
+
+class _ExploreScreenState extends State<ExploreScreen> {
+  @override
   Widget build(BuildContext context) {
+    
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -25,7 +32,10 @@ class ExploreScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          SearchText(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SearchText(),
+          ),
           BannerWidget(),
           SizedBox(
             height: 10,
