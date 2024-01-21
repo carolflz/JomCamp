@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class LevelText extends StatelessWidget {
+
+class LevelState extends StatefulWidget {
+  @override
+  State<LevelState> createState() => LevelText();
+}
+
+class LevelText extends State<LevelState> {
   final Map<String, Color> levelColors = {
     'Beginner': Colors.green.shade300,
     'Intermediate': Colors.amber.shade300,
@@ -13,6 +19,30 @@ class LevelText extends StatelessWidget {
     'Intermediate',
     'Advanced',
   ];
+
+  Future<List<Map<String, dynamic>>> getData(level) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    return await db.collection("google_map_campsites").get().then(
+      (querySnapshot) {
+        List<Map<String, dynamic>> dataFromFirestore = [];
+        print("Successfully completed");
+        for (var doc in querySnapshot.docs) {
+          if (doc.data()["Level"] == level) {
+            dataFromFirestore.add(doc.data());
+          }
+        }
+        print("Returning data");
+        return dataFromFirestore;
+      },
+      onError: (e) {
+        print("Error: $e");
+        return null;
+      },
+    );
+  }
+
+  var dataFetched;
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +67,19 @@ class LevelText extends StatelessWidget {
                     itemCount: _levelLabels.length,
                     itemBuilder: (context, index) {
                       final level = _levelLabels[index];
-                      final color = levelColors[level] ?? Colors.grey; // Default color if not found
+                      final color =
+                          levelColors[level] ?? Colors.grey; // Default color if not found
 
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(5.0, 1.0, 10.0, 0),
                         child: ActionChip(
                           backgroundColor: color,
                           onPressed: () {
-                            // Call a function to fetch data based on the selected level
-                            fetchDataFromFirestore(level);
+                            getData(level).then((value) {
+                              setState(() {
+                                dataFetched = value;
+                              });
+                            });
                           },
                           label: Center(
                             child: Text(
@@ -65,31 +99,77 @@ class LevelText extends StatelessWidget {
               ],
             ),
           ),
+          dataFetched == null
+              ? Container()
+              : SizedBox(
+                  height: 100,
+                  child: ListView.builder(
+                    itemCount: dataFetched.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: ListTile(
+                              title: Text(dataFetched[index]["Name"]),
+                              leading: Image.network(dataFetched[index]["image"]),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                              context,
+                           MaterialPageRoute(
+                          builder: (context) => CampsiteDetailsScreen(dataFetched[index]),
+                              ),
+                            );
+                          },
+                        style:ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue, // Background color
+                        foregroundColor: Colors.black, // Text color
+                        ),
+                        child: Text('View details'),
+                          ),
+
+                        ],
+                      );
+                    },
+                  ),
+                ),
         ],
       ),
     );
   }
+}
 
-  void fetchDataFromFirestore(String selectedLevel) {
-    // Access Firestore and fetch data based on the selected level
-    CollectionReference campsites = FirebaseFirestore.instance.collection('campsites');
+class CampsiteDetailsScreen extends StatelessWidget {
+  final Map<String, dynamic> campsiteData;
 
-    if (selectedLevel == 'All') {
-      // Fetch all campsites
-      campsites.get().then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          print(doc.data());
-          // Handle each document as needed
-        });
-      });
-    } else {
-      // Fetch campsites based on the selected level
-      campsites.where('Level', isEqualTo: selectedLevel).get().then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          print(doc.data());
-          // Handle each document as needed
-        });
-      });
-    }
+  CampsiteDetailsScreen(this.campsiteData);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Campsite Details'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Name: ${campsiteData["Name"]}',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Image: ${campsiteData["image"]}',
+              style: TextStyle(fontSize: 16),
+            ),
+            // Add more details as needed
+          ],
+        ),
+      ),
+    );
   }
 }
