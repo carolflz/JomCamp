@@ -9,7 +9,7 @@ class NumbersWidget extends StatelessWidget {
         children: <Widget>[
           buildButton(text: 'Following', value: 39),
           buildDivider(),
-          buildButton(text: 'Foolowers', value: 892),
+          buildButton(text: 'Followers', value: 892),
         ],
       );
 
