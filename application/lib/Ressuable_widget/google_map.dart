@@ -253,25 +253,30 @@ class MyMapState extends State<MyMap> {
     });
   }
 
-  Marker _createMarker({
-    required String id,
-    required LatLng position,
-    required String title,
-    required String snippet,
-  }) {
-    return Marker(
-      markerId: MarkerId(id),
-      position: position,
-      infoWindow: InfoWindow(
-        title: title,
-        snippet: 'Tap for navigation',
-      ),
+Marker _createMarker({
+  required String id,
+  required LatLng position,
+  required String title,
+  required String snippet,
+}) {
+  return Marker(
+    markerId: MarkerId(id),
+    position: position,
+    infoWindow: InfoWindow(
+      title: title,
+      snippet: 'Tap for navigation',
       onTap: () {
+        // Handle the tap on the info window
         launchMaps(position.latitude, position.longitude);
       },
-      icon: BitmapDescriptor.defaultMarker,
-    );
-  }
+    ),
+    onTap: () {
+      // Do nothing when the marker is tapped
+    },
+    icon: BitmapDescriptor.defaultMarker,
+  );
+}
+
 
   List<Marker> allMarkers = [];
   Marker marker1 = Marker(
@@ -574,12 +579,36 @@ class MyMapState extends State<MyMap> {
     icon: BitmapDescriptor.defaultMarker,
   );
 
-  Future<void> launchMaps(double lat, double lng) async {
-    final String googleMapsUrl =
-        'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+Marker createMarker({
+  required String id,
+  required LatLng position,
+  required String title,
+}) {
+  return Marker(
+    markerId: MarkerId(id),
+    position: position,
+    infoWindow: InfoWindow(
+      title: title,
+      snippet: 'Tap for navigation',
+      onTap: () {
+        launchMaps(position.latitude, position.longitude);
+      },
+    ),
+    onTap: () {
+      // Handle tap on the marker if needed
+    },
+    icon: BitmapDescriptor.defaultMarker,
+  );
+}
 
-    await launchUrl(Uri.parse(googleMapsUrl));
-  }
+Future<void> launchMaps(double lat, double lng) async {
+  final String googleMapsUrl =
+      'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+
+  await launchUrl(Uri.parse(googleMapsUrl));
+}
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -62,6 +62,7 @@ class _CategoryTextState extends State<CategoryText> {
             ),
           ),
           Container(
+            margin: EdgeInsets.only(top: 10), // Add margin to move the category labels down
             height: 50, // Increase the height of the category label box
             child: Row(
               children: [
