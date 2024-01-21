@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:web_admin/screen/add_campsite_screen.dart';
-import 'package:web_admin/widget/display.dart';
+import 'package:web_admin/widget/campsite.dart';
 
 // ignore: use_key_in_widget_constructors
 class CampsiteScreen extends StatefulWidget {

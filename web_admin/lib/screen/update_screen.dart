@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:web_admin/widget/textinput.dart';
 
 class UpdateScreen extends StatelessWidget {
   final String objId;
@@ -36,18 +37,7 @@ class UpdateScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10),
           child: Column(children: [
-            TextFormField(
-              decoration: InputDecoration(
-                  label: Text('Name'),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100)),
-                  floatingLabelStyle: TextStyle(color: Colors.grey),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100),
-                      borderSide: const BorderSide(width: 2)),
-                  prefixIcon: Icon(LineAwesomeIcons.campground)),
-              controller: name,
-            ),
+            TextInput(title: 'Name', controller: name),
             SizedBox(
               height: 15,
             ),
@@ -105,18 +95,7 @@ class UpdateScreen extends StatelessWidget {
             SizedBox(
               height: 15,
             ),
-            TextFormField(
-              decoration: InputDecoration(
-                  label: Text('Address'),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100)),
-                  floatingLabelStyle: TextStyle(color: Colors.grey),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100),
-                      borderSide: const BorderSide(width: 2)),
-                  prefixIcon: Icon(LineAwesomeIcons.map_marked)),
-              controller: address,
-            ),
+            TextInput(title: 'Address', controller: address),
             SizedBox(
               height: 15,
             ),
