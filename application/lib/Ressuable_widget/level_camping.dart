@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'campsite_details_test.dart';
 
 class LevelState extends StatefulWidget {
   @override
@@ -58,7 +58,7 @@ class LevelText extends State<LevelState> {
             ),
           ),
           Container(
-            height: 40,
+            height: 50,
             child: Row(
               children: [
                 Expanded(
@@ -86,7 +86,7 @@ class LevelText extends State<LevelState> {
                               level,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -101,39 +101,34 @@ class LevelText extends State<LevelState> {
           ),
           dataFetched == null
               ? Container()
-              : SizedBox(
-                  height: 100,
-                  child: ListView.builder(
-                    itemCount: dataFetched.length,
-                    itemBuilder: (context, index) {
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: ListTile(
-                              title: Text(dataFetched[index]["Name"]),
-                              leading: Image.network(dataFetched[index]["image"]),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: ClampingScrollPhysics(),
+                  itemCount: dataFetched.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: ListTile(
+                        title: Text(dataFetched[index]["Name"]),
+                        leading: Image.network(dataFetched[index]["image"]),
+                        trailing: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
                               context,
-                           MaterialPageRoute(
-                          builder: (context) => CampsiteDetailsScreen(dataFetched[index]),
+                              MaterialPageRoute(
+                                builder: (context) => CampsiteDetailsScreen(dataFetched[index]),
                               ),
                             );
                           },
-                        style:ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue, // Background color
-                        foregroundColor: Colors.black, // Text color
-                        ),
-                        child: Text('View details'),
+                              style: ElevatedButton.styleFrom(
+                            primary: Colors.green, // Forest green background
+                            onPrimary: Colors.black, // Text color
                           ),
-
-                        ],
-                      );
-                    },
-                  ),
+                          child: Text('View Details'),
+                        ),
+                      ),
+                    );
+                  },
                 ),
         ],
       ),
@@ -141,35 +136,3 @@ class LevelText extends State<LevelState> {
   }
 }
 
-class CampsiteDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> campsiteData;
-
-  CampsiteDetailsScreen(this.campsiteData);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Campsite Details'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Name: ${campsiteData["Name"]}',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Image: ${campsiteData["image"]}',
-              style: TextStyle(fontSize: 16),
-            ),
-            // Add more details as needed
-          ],
-        ),
-      ),
-    );
-  }
-}
