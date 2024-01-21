@@ -5,9 +5,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:application/Ressuable_widget/google_map.dart';
 import 'package:application/Ressuable_widget/level_camping.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
+
+
 
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
@@ -16,7 +21,6 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   @override
   Widget build(BuildContext context) {
-    
 
     return SingleChildScrollView(
       child: Column(
@@ -45,7 +49,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
             height: 20,
           ),
           CategoryText(),
-          LevelText(),
+          LevelState(),
 
         ],
       ),
