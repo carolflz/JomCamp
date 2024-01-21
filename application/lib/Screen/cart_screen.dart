@@ -19,10 +19,10 @@ class _CartScreenState extends State<CartScreen> {
 
   void fetchEquipment() async {
     var userQuery =
-        await FirebaseFirestore.instance.collection('users').limit(1).get();
+        await FirebaseFirestore.instance.collection('Booking').get();
     var userData = userQuery.docs.first.data();
     setState(() {
-      equipmentList = userData['equipment'] ?? [];
+      equipmentList = userData['equipments'] ?? [];
     });
   }
 
@@ -35,7 +35,7 @@ class _CartScreenState extends State<CartScreen> {
       appBar: AppBar(
         title: Text('Shopping Cart',
             style: TextStyle(
-                fontSize: 25.0, letterSpacing: 2.0, color: Colors.white)),
+                fontSize: 25.0, letterSpacing: 2.0, color: Colors.black)),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
@@ -76,7 +76,7 @@ class _CartScreenState extends State<CartScreen> {
             color: Colors.yellow.shade900,
           ),
           Text('${item['quantity']}',
-              style: TextStyle(fontSize: 18, color: Colors.white)),
+              style: TextStyle(fontSize: 18, color: Colors.black)),
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
@@ -96,42 +96,52 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  void updateQuantity(
-      Map<String, dynamic> item, CartProvider cartProvider, int change) async {
-    var newQuantity = item['quantity'] + change;
-    if (newQuantity <= 0) return;
+  void updateQuantity(Map<String, dynamic> item, CartProvider cartProvider, int change) async {
+      var newQuantity = item['quantity'] + change;
+      if (newQuantity <= 0) return;
 
-    var userQuery =
-        await FirebaseFirestore.instance.collection('users').limit(1).get();
-    var userDoc = userQuery.docs.first;
+      var userQuery = await FirebaseFirestore.instance.collection('Booking').get();
+      var userDoc = userQuery.docs.first;
 
-    FirebaseFirestore.instance.runTransaction((transaction) async {
-      DocumentSnapshot snapshot = await transaction.get(userDoc.reference);
-      List<dynamic> equipmentList = List.from(snapshot['equipment']);
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+          DocumentSnapshot snapshot = await transaction.get(userDoc.reference);
+          List<dynamic> equipmentList = List.from(snapshot['equipments']);
 
-      var index = equipmentList.indexWhere((i) => i['id'] == item['id']);
-      if (index != -1) {
-        equipmentList[index]['quantity'] = newQuantity;
-        transaction.update(userDoc.reference, {'equipment': equipmentList});
-      }
-    }).then((_) {
-      cartProvider.addToCart(change);
-      fetchEquipment();
-    });
+          var index = equipmentList.indexWhere((i) => i['id'] == item['id']);
+          int totalEquipmentFee = 0;
+
+          if (index != -1) {
+              equipmentList[index]['quantity'] = newQuantity;
+              equipmentList[index]['equipmentFee'] = newQuantity * (equipmentList[index]['price'] as int); 
+
+              totalEquipmentFee = equipmentList.fold(0, (total, current) {
+                  int equipmentFee = current['equipmentFee'] is int ? current['equipmentFee'] : 0;
+                  return total + equipmentFee;
+              });
+
+              transaction.update(userDoc.reference, {
+                  'equipments': equipmentList,
+                  'totalEquipmentFee': totalEquipmentFee
+              });
+          }
+      }).then((_) {
+          cartProvider.addToCart(change);
+          fetchEquipment(); // Fetch updated equipment list
+      });
   }
 
   void removeItemFromCart(
       Map<String, dynamic> item, CartProvider cartProvider) async {
     var userQuery =
-        await FirebaseFirestore.instance.collection('users').limit(1).get();
+        await FirebaseFirestore.instance.collection('Booking').get();
     var userDoc = userQuery.docs.first;
 
     FirebaseFirestore.instance.runTransaction((transaction) async {
       DocumentSnapshot snapshot = await transaction.get(userDoc.reference);
-      List<dynamic> equipmentList = List.from(snapshot['equipment']);
+      List<dynamic> equipmentList = List.from(snapshot['equipments']);
 
       equipmentList.removeWhere((i) => i['id'] == item['id']);
-      transaction.update(userDoc.reference, {'equipment': equipmentList});
+      transaction.update(userDoc.reference, {'equipments': equipmentList});
     }).then((_) {
       cartProvider.addToCart(-item['quantity']);
       fetchEquipment();

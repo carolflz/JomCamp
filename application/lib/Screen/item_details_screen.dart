@@ -1,9 +1,9 @@
-import 'package:application/Screen/cart_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:application/api/cart_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:application/Screen/cart_screen.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
   final DocumentSnapshot<Object?> item;
@@ -86,13 +86,16 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
         padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
         child: Column(
           children: [
-            Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 250,
-              errorBuilder: (context, error, stackTrace) =>
-                  Icon(Icons.broken_image, size: 250),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15.0), // Set the corner radius here
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 250,
+                errorBuilder: (context, error, stackTrace) =>
+                    Icon(Icons.broken_image, size: 250),
+              ),
             ),
             SizedBox(height: 20),
             Column(
@@ -227,7 +230,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           try {
                             QuerySnapshot<Map<String, dynamic>> userQuery =
                                 await FirebaseFirestore.instance
-                                    .collection('users')
+                                    .collection('Booking')
                                     .get();
 
                             if (userQuery.docs.isNotEmpty) {
@@ -245,10 +248,10 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
 
                                   if (freshUserDoc
                                       .data()!
-                                      .containsKey('equipment')) {
+                                      .containsKey('equipments')) {
                                     List<Map<String, dynamic>>
                                         currentEquipmentList =
-                                        List.from(freshUserDoc['equipment']);
+                                        List.from(freshUserDoc['equipments']);
 
                                     int index = currentEquipmentList.indexWhere(
                                         (equipment) =>
@@ -286,12 +289,12 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                                     prev + current);
 
                                     transaction.update(userDoc.reference, {
-                                      'equipment': currentEquipmentList,
+                                      'equipments': currentEquipmentList,
                                       'totalEquipmentFee': newTotalEquipmentFee,
                                     });
                                   } else {
                                     transaction.update(userDoc.reference, {
-                                      'equipment': [
+                                      'equipments': [
                                         {
                                           'id': widget.item.id,
                                           'name': widget.item['Item Name'],
@@ -322,7 +325,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.all(10.0),
-                          backgroundColor: Colors.yellow.shade900,
+                          backgroundColor: Colors.black,
                           fixedSize: Size(200, 50),
                           textStyle:
                               TextStyle(fontSize: 18, letterSpacing: 5.0),
@@ -331,17 +334,16 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       ),
                       SizedBox(height: 18.0),
                       ElevatedButton(
-                        child: Text("   CANCEL  "),
+                        child: Text("CANCEL"),
                         onPressed: () {
-                          Navigator.pushNamed(context, '/rental');
+                          Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.all(10.0),
                           backgroundColor: Colors.yellow.shade900,
                           fixedSize: Size(200, 50),
-                          textStyle:
-                              TextStyle(fontSize: 18, letterSpacing: 5.0),
+                          textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
                           shape: StadiumBorder(),
                         ),
                       ),

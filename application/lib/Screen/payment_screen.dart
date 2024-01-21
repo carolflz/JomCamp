@@ -8,73 +8,64 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  late Stream<QuerySnapshot<Map<String, dynamic>>> _userStream;
+  String bookingDate = '';
+  String bookingTime = '';
   int deliveryFee = 5;
   int equipmentFee = 0;
   int totalFee = 0;
+  int campsiteFee = 0;
+  String campsiteName = 'Fetching campsite...';
   List<Map<String, dynamic>> equipmentList = [];
 
   @override
   void initState() {
     super.initState();
-    _userStream = FirebaseFirestore.instance.collection('users').snapshots();
-    fetchCartItems();
+    fetchBookingDetails();
   }
 
-  StreamBuilder<QuerySnapshot<Map<String, dynamic>>> buildBookingStream() {
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: _userStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          var userDocuments = snapshot.data!.docs;
-          return buildBookingInfo(userDocuments);
-        } else if (snapshot.hasError) {
-          // Handle error case
-          return Text('Error: ${snapshot.error}');
-        } else {
-          // Handle loading state
-          return CircularProgressIndicator();
+  Future<void> fetchBookingDetails() async {
+    try {
+      var bookingQuery = await FirebaseFirestore.instance.collection('Booking').get();
+      if (bookingQuery.docs.isNotEmpty) {
+        var bookingData = bookingQuery.docs.first.data();
+        var campsiteId = bookingData['Campsite Id'];
+        
+        // Save date and time from booking
+        bookingDate = bookingData['Date'] ?? '';
+        bookingTime = bookingData['Time'] ?? '';
+
+        if (campsiteId != null) {
+          var campsiteDoc = await FirebaseFirestore.instance.collection('google_map_campsites').doc(campsiteId).get();
+          var campsiteData = campsiteDoc.data();
+          setState(() {
+            campsiteName = campsiteData?['Name'] ?? 'No campsite name found';
+            campsiteFee = campsiteData?['Fee'] ?? 0;
+            equipmentList = List<Map<String, dynamic>>.from(bookingData['equipments'] ?? []);
+            equipmentFee = bookingData['totalEquipmentFee'] ?? 0;
+            totalFee = equipmentFee + deliveryFee + campsiteFee;
+          });
         }
-      },
+      }
+    } catch (e) {
+      setState(() {
+        campsiteName = 'Error loading campsite';
+      });
+      print("Error fetching booking details: $e");
+    }
+  }
+
+  Widget buildBookingInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('$campsiteName', style: TextStyle(fontSize: 18)),
+        SizedBox(height: 4),
+        Text('$bookingDate', style: TextStyle(fontSize: 16)),
+        SizedBox(height: 2),
+        Text('$bookingTime', style: TextStyle(fontSize: 16)),
+        SizedBox(height: 10),
+      ],
     );
-  }
-
-  Widget buildBookingInfo(
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> userDocuments) {
-    var latestUserDocument =
-        userDocuments.isNotEmpty ? userDocuments.last : null;
-
-    List<Map<String, dynamic>> bookingDetails =
-        (latestUserDocument?.data()['bookings'] as List?)
-                ?.cast<Map<String, dynamic>>() ??
-            [];
-
-    var latestBooking = bookingDetails.isNotEmpty ? bookingDetails.last : null;
-
-    return latestBooking != null
-        ? ListTile(
-            title: Text('${latestBooking['campsite']}',
-                style: TextStyle(fontSize: 18, color: Colors.black)),
-            subtitle: Text(
-              'Date: ${latestBooking['date']}\nTime: ${latestBooking['time']}',
-              style: TextStyle(fontSize: 16, color: Colors.black),
-            ),
-          )
-        : ListTile(
-            title: Text('No Booking', style: TextStyle(color: Colors.black)),
-          );
-  }
-
-  void fetchCartItems() async {
-    var userQuery =
-        await FirebaseFirestore.instance.collection('users').limit(1).get();
-    var userData = userQuery.docs.first.data();
-    setState(() {
-      equipmentList =
-          List<Map<String, dynamic>>.from(userData['equipment'] ?? []);
-      equipmentFee = userData['totalEquipmentFee'] ?? 0;
-      totalFee = equipmentFee + deliveryFee;
-    });
   }
 
   Widget buildCartItems() {
@@ -85,10 +76,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       itemBuilder: (context, index) {
         var item = equipmentList[index];
         return ListTile(
-          title: Text('${item['name']} x ${item['quantity']}',
-              style: TextStyle(color: Colors.black)),
-          subtitle: Text('Price: RM ${item['equipmentFee']}',
-              style: TextStyle(color: Colors.black.withOpacity(0.5))),
+          title: Text('${item['name']} x ${item['quantity']}', style: TextStyle(color: Colors.black)),
+          subtitle: Text('Price: RM ${item['equipmentFee']}', style: TextStyle(color: Colors.black.withOpacity(0.5))),
         );
       },
     );
@@ -100,7 +89,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         SizedBox(height: 20),
-        Text('Campsite Fee     : RMXX.XX',
+        Text('Campsite Fee     : RM $campsiteFee',
             style: TextStyle(fontSize: 16, color: Colors.black)),
         Text('Equipment Fee   : RM $equipmentFee.00',
             style: TextStyle(fontSize: 16, color: Colors.black)),
@@ -138,10 +127,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            buildBookingStream(),
+            Text('Booking Details:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+            SizedBox(height: 8),
+            buildBookingInfo(),
             SizedBox(height: 12),
+            Text('Cart Items:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+            SizedBox(height: 8),
             buildCartItems(),
             SizedBox(height: 12),
+            Text('Payment Fees:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+            SizedBox(height: 8),
             buildPaymentDetails(),
             SizedBox(height: 20),
             Center(
@@ -164,13 +159,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 "total": "$totalFee",
                                 "currency": "MYR",
                                 "details": {
-                                  "campsite fee": '70',
+                                  "campsite fee": '$campsiteFee',
                                   "equipment fee": "$equipmentFee",
                                   "delivery fee": "$deliveryFee",
                                 }
                               },
-                              "description":
-                                  "The payment transaction description.",
+                              // "description":
+                              //     "The payment transaction description.",
                               // "payment_options": {
                               //   "allowed_payment_method":
                               //       "INSTANT_FUNDING_SOURCE"
@@ -222,7 +217,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.all(10.0),
-                      backgroundColor: Colors.yellow.shade900,
+                      backgroundColor: Colors.black,
                       fixedSize: Size(200, 50),
                       textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
                       shape: StadiumBorder(),

@@ -25,22 +25,23 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Future<void> fetchCampsiteInfo() async {
     try {
-      // Fetch the first document from the 'users' collection
-      QuerySnapshot<Map<String, dynamic>> userQuery =
-          await FirebaseFirestore.instance.collection('users').limit(1).get();
+      QuerySnapshot<Map<String, dynamic>> bookingQuery = await FirebaseFirestore.instance
+          .collection('Booking')
+          .get();
 
-      if (userQuery.docs.isNotEmpty) {
-        DocumentSnapshot<Map<String, dynamic>> userDoc = userQuery.docs.first;
-        List<Map<String, dynamic>> bookingDetails =
-            (userDoc.data()?['bookings'] as List?)
-                    ?.cast<Map<String, dynamic>>() ??
-                [];
+      if (bookingQuery.docs.isNotEmpty) {
+        DocumentSnapshot<Map<String, dynamic>> bookingDoc = bookingQuery.docs.first;
+        String campsiteId = bookingDoc.data()?['Campsite Id'];
 
-        if (bookingDetails.isNotEmpty) {
+        if (campsiteId != null) {
+          DocumentSnapshot<Map<String, dynamic>> campsiteDoc = 
+              await FirebaseFirestore.instance.collection('google_map_campsites').doc(campsiteId).get();
+
+          String campsiteName = campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+
           setState(() {
-            campsiteName =
-                bookingDetails.last['campsite'] ?? 'No campsite name found';
-            imageUrl = bookingDetails.last['image'] ?? '';
+            this.campsiteName = campsiteName;
+            this.imageUrl = campsiteDoc.data()?['Image'] ?? '';
           });
         }
       }
@@ -50,9 +51,7 @@ class _BookingScreenState extends State<BookingScreen> {
         imageUrl = 'Error loading campsite image';
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                'Failed to load campsite details. Please try again later.')),
+        SnackBar(content: Text('Failed to load campsite details. Please try again later.'))
       );
     }
   }
@@ -88,12 +87,15 @@ class _BookingScreenState extends State<BookingScreen> {
             SizedBox(
               height: 250,
               width: double.infinity,
-              child: imageUrl.isNotEmpty
-                  ? Image.network(imageUrl, fit: BoxFit.cover)
-                  : Container(
-                      color: Colors.yellow.shade900,
-                      child: Icon(Icons.image, size: 128, color: Colors.white),
-                    ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0), // Set the corner radius here
+                child: imageUrl.isNotEmpty
+                    ? Image.network(imageUrl, fit: BoxFit.cover)
+                    : Container(
+                        color: Colors.black.withOpacity(0.2),
+                        child: Icon(Icons.image, size: 128, color: Colors.white),
+                      ),
+              ),
             ),
             SizedBox(height: 14.0),
             Text(
@@ -113,7 +115,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     final DateTime? dateTime = await showDatePicker(
                       context: context,
                       initialDate: selectedDate,
-                      firstDate: DateTime(2000),
+                      firstDate: DateTime.now(),
                       lastDate: DateTime(3000),
                     );
                     if (dateTime != null) {
@@ -127,7 +129,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       ' SELECT DATE    -    ${selectedDate.day} / ${selectedDate.month} / ${selectedDate.year} '),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.yellow.shade900,
+                    backgroundColor: Colors.black,
                   ),
                 ),
               ],
@@ -150,8 +152,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 label: Text(
                     '   SELECT TIME    -    ${selectedTime.format(context)}    '),
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.yellow.shade900,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.black,
                 ),
               ),
             ]),
@@ -169,7 +171,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   label: Text('ADD CAMPING EQUIPMENT ($cartCounter)'),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.yellow.shade900,
+                    backgroundColor: Colors.black,
                   ),
                 ),
               ],
@@ -182,14 +184,13 @@ class _BookingScreenState extends State<BookingScreen> {
                   ElevatedButton(
                     child: Text("CONFIRM"),
                     onPressed: () async {
-                      await updateBooking(
-                          selectedDate, selectedTime.format(context));
+                      await updateBooking(selectedDate, selectedTime.format(context));
                       Navigator.pushNamed(context, '/payment');
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
+                      backgroundColor: Colors.black,
                       padding: EdgeInsets.all(10.0),
-                      backgroundColor: Colors.yellow.shade900,
                       fixedSize: Size(200, 50),
                       textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
                       shape: StadiumBorder(),
@@ -217,39 +218,29 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Future<void> updateBooking(DateTime date, String time) async {
-    QuerySnapshot<Map<String, dynamic>> userQuery =
-        await FirebaseFirestore.instance.collection('users').get();
+Future<void> updateBooking(DateTime date, String time) async {
+  try {
+    QuerySnapshot<Map<String, dynamic>> bookingQuery =
+        await FirebaseFirestore.instance.collection('Booking').get();
 
-    if (userQuery.docs.isNotEmpty) {
-      DocumentSnapshot<Map<String, dynamic>> userDoc = userQuery.docs.first;
+    if (bookingQuery.docs.isNotEmpty) {
+      DocumentSnapshot<Map<String, dynamic>> bookingDoc = bookingQuery.docs.first;
 
-      var rawBookings = userDoc.data()?['bookings'];
-      List<Map<String, dynamic>> existingBookings;
-      if (rawBookings is List<dynamic>) {
-        existingBookings =
-            rawBookings.map((item) => item as Map<String, dynamic>).toList();
-      } else {
-        existingBookings = <Map<String, dynamic>>[];
+      if (bookingDoc.exists) {
+        await FirebaseFirestore.instance.runTransaction((transaction) async {
+          DocumentSnapshot<Map<String, dynamic>> freshBookingDoc =
+              await transaction.get(bookingDoc.reference);
+
+          transaction.update(bookingDoc.reference, {
+            'Date': DateFormat('dd/MM/yyyy').format(date),
+            'Time': time,
+          });
+        });
       }
-
-      existingBookings.add({
-        'date': DateFormat('dd/MM/yyyy').format(date),
-        'time': time,
-      });
-
-      userDoc.reference.update({
-        'bookings': existingBookings,
-      });
-    } else {
-      await FirebaseFirestore.instance.collection('users').add({
-        'bookings': [
-          {
-            'date': DateFormat('dd/MM/yyyy').format(date),
-            'time': time,
-          },
-        ],
-      });
     }
+  } catch (error) {
+    print('Error updating booking: $error');
   }
+}
+
 }

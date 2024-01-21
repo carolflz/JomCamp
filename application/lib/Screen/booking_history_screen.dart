@@ -8,8 +8,52 @@ class BookingHistoryScreen extends StatefulWidget {
 }
 
 class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
-  final Stream<QuerySnapshot<Map<String, dynamic>>> _userStream =
-      FirebaseFirestore.instance.collection('users').limit(1).snapshots();
+  List<Map<String, dynamic>> upcomingBookings = [];
+  List<Map<String, dynamic>> previousBookings = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBookings();
+  }
+
+  void fetchBookings() async {
+    QuerySnapshot<Map<String, dynamic>> bookingQuery = await FirebaseFirestore.instance
+      .collection('Booking')
+      .get();
+
+    List<Map<String, dynamic>> tempUpcoming = [];
+    List<Map<String, dynamic>> tempPrevious = [];
+
+    for (var doc in bookingQuery.docs) {
+      DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
+      String campsiteId = doc.data()['Campsite Id'];
+
+      DocumentSnapshot<Map<String, dynamic>> campsiteDoc = await FirebaseFirestore.instance
+        .collection('google_map_campsites')
+        .doc(campsiteId)
+        .get();
+
+      String campsiteName = campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+
+      Map<String, dynamic> booking = {
+        ...doc.data(),
+        'campsiteName': campsiteName,
+        'id': doc.id, // Include the document ID
+      };
+
+      if (bookingDate.isAfter(DateTime.now())) {
+        tempUpcoming.add(booking);
+      } else {
+        tempPrevious.add(booking);
+      }
+    }
+
+    setState(() {
+      upcomingBookings = tempUpcoming;
+      previousBookings = tempPrevious;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +71,11 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
             ),
           ),
           centerTitle: true,
-          // leading: IconButton(
-          //   onPressed: () => Navigator.pop(context),
-          //   icon: Icon(Icons.arrow_back, color: Colors.black),
-          // ),
           bottom: TabBar(
             labelColor: Colors.yellow.shade900,
             unselectedLabelColor: Colors.black,
-            isScrollable: true,
             indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(
-                color: Colors.yellow.shade900,
-              ),
+              borderSide: BorderSide(color: Colors.yellow.shade900),
             ),
             tabs: [
               Tab(text: 'Upcoming Bookings'),
@@ -46,123 +83,46 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
             ],
           ),
         ),
-        body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: _userStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var userDocuments = snapshot.data!.docs;
-              return buildBookingsTabs(userDocuments);
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return CircularProgressIndicator();
-            }
-          },
+        body: TabBarView(
+          children: [
+            buildBookingsList(upcomingBookings, isUpcoming: true),
+            buildBookingsList(previousBookings, isUpcoming: false),
+          ],
         ),
       ),
     );
   }
 
-  Widget buildBookingsTabs(
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> userDocuments) {
-    List<Map<String, dynamic>> upcomingBookings = [];
-    List<Map<String, dynamic>> previousBookings = [];
-
-    for (var userDocument in userDocuments) {
-      List<Map<String, dynamic>> bookingDetails =
-          (userDocument.data()['bookings'] as List?)
-                  ?.cast<Map<String, dynamic>>() ??
-              [];
-
-      for (var booking in bookingDetails) {
-        DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(booking['date']);
-
-        if (bookingDate.isAfter(DateTime.now())) {
-          upcomingBookings.add(booking);
-        } else {
-          previousBookings.add(booking);
-        }
-      }
-    }
-
-    return Expanded(
-      child: TabBarView(
-        children: [
-          buildBookingsList(upcomingBookings, isUpcoming: true),
-          buildBookingsList(previousBookings, isUpcoming: false),
-        ],
-      ),
-    );
-  }
-
-  Widget buildBookingsList(List<Map<String, dynamic>> bookings,
-      {required bool isUpcoming}) {
+  Widget buildBookingsList(List<Map<String, dynamic>> bookings, {required bool isUpcoming}) {
     return ListView.builder(
       itemCount: bookings.length,
       itemBuilder: (context, index) {
         var booking = bookings[index];
-        return ListTile(
-          title: Text('${booking['campsite']}',
-              style: TextStyle(fontSize: 18, color: Colors.black)),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Date : ${booking['date']}',
-                style: TextStyle(fontSize: 16, color: Colors.black),
-              ),
-              Text(
-                'Time : ${booking['time']}',
-                style: TextStyle(fontSize: 16, color: Colors.black),
-              ),
-              if (isUpcoming)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        editBooking(booking);
-                      },
-                      icon: Icon(Icons.edit),
-                      label: Text('EDIT', style: TextStyle(fontSize: 12)),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.yellow.shade900,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        removeBooking(booking);
-                      },
-                      icon: Icon(Icons.delete),
-                      label: Text('REMOVE', style: TextStyle(fontSize: 12)),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.yellow.shade900,
-                      ),
-                    ),
-                  ],
+        return Card(
+          child: ListTile(
+            title: Text('${booking['campsiteName']}'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Date: ${booking['Date']}', style: TextStyle(fontSize: 16)),
+                Text('Time: ${booking['Time']}', style: TextStyle(fontSize: 16)),
+              ],
+            ),
+            trailing: isUpcoming ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () => editBooking(booking), 
                 ),
-            ],
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () => removeBooking(booking),
+                ),
+              ],
+            ) : null,
           ),
         );
-      },
-    );
-  }
-
-  StreamBuilder<QuerySnapshot<Map<String, dynamic>>> buildBookingStream() {
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: _userStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          var userDocuments = snapshot.data!.docs;
-          return buildBookingsTabs(userDocuments);
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return CircularProgressIndicator();
-        }
       },
     );
   }
@@ -170,7 +130,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
   void editBooking(Map<String, dynamic> booking) async {
     DateTime? newDate = await showDatePicker(
       context: context,
-      initialDate: DateFormat('dd/MM/yyyy').parse(booking['date']),
+      initialDate: DateFormat('dd/MM/yyyy').parse(booking['Date']),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
@@ -179,7 +139,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
       TimeOfDay? newTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.fromDateTime(
-            DateFormat('dd/MM/yyyy').parse(booking['date'])),
+          DateFormat('HH:mm').parse(booking['Time'])
+        ),
       );
 
       if (newTime != null) {
@@ -188,47 +149,53 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     }
   }
 
-  void updateBookingInFirestore(
-      Map<String, dynamic> booking, DateTime newDate, TimeOfDay newTime) {
-    FirebaseFirestore.instance.collection('users').get().then((querySnapshot) {
-      querySnapshot.docs.forEach((document) {
-        var userBookings =
-            List<Map<String, dynamic>>.from(document.data()['bookings']);
+  void updateBookingInFirestore(Map<String, dynamic> booking, DateTime newDate, TimeOfDay newTime) async {
+    await FirebaseFirestore.instance.collection('Booking').doc(booking['id']).update({
+      'Date': DateFormat('dd/MM/yyyy').format(newDate),
+      'Time': newTime.format(context),
+    });
 
-        // Find the index of the booking to be updated
-        int bookingIndex = userBookings.indexWhere((b) =>
-            b['campsite'] == booking['campsite'] &&
-            b['date'] == booking['date'] &&
-            b['time'] == booking['time']);
-
-        if (bookingIndex != -1) {
-          // Update the booking details
-          userBookings[bookingIndex]['date'] =
-              DateFormat('dd/MM/yyyy').format(newDate);
-          userBookings[bookingIndex]['time'] = '${newTime.format(context)}';
-
-          // Update the document
-          document.reference.update({'bookings': userBookings});
-        }
-      });
+    setState(() {
+      booking['Date'] = DateFormat('dd/MM/yyyy').format(newDate);
+      booking['Time'] = newTime.format(context);
     });
   }
 
-  void removeBooking(Map<String, dynamic> booking) {
-    FirebaseFirestore.instance.collection('users').get().then((querySnapshot) {
-      querySnapshot.docs.forEach((document) {
-        var userBookings =
-            List<Map<String, dynamic>>.from(document.data()['bookings']);
+  void removeBooking(Map<String, dynamic> booking) async {
+    bool confirmDelete = await showDeleteConfirmationDialog(context);
 
-        // Remove the booking
-        userBookings.removeWhere((b) =>
-            b['campsite'] == booking['campsite'] &&
-            b['date'] == booking['date'] &&
-            b['time'] == booking['time']);
-
-        // Update the document
-        document.reference.update({'bookings': userBookings});
+    if (confirmDelete) {
+      await FirebaseFirestore.instance.collection('Booking').doc(booking['id']).delete();
+      
+      setState(() {
+        if (upcomingBookings.contains(booking)) {
+          upcomingBookings.remove(booking);
+        } else if (previousBookings.contains(booking)) {
+          previousBookings.remove(booking);
+        }
       });
-    });
+    }
+  }
+
+  Future<bool> showDeleteConfirmationDialog(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Deletion"),
+          content: Text("Are you sure you want to delete this booking?"),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            ElevatedButton(
+              child: Text("Delete"),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      },
+    ) ?? false;
   }
 }
