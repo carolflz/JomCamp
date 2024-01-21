@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'campsite_details_test.dart'; // Import CampsiteDetailsScreen
 
 class CategoryText extends StatefulWidget {
   @override
@@ -8,9 +9,9 @@ class CategoryText extends StatefulWidget {
 
 class _CategoryTextState extends State<CategoryText> {
   final Map<String, Color> categoryColor = {
-    'Forested': Color.fromARGB(255, 150, 212, 78),   // Light Green
-    'Riverside': Color.fromRGBO(92, 182, 255, 1),  // Light Blue
-    'Mountainous': Color.fromARGB(255, 253, 126, 117),// Light Red
+    'Forested': Color.fromARGB(255, 150, 212, 78), // Light Green
+    'Riverside': Color.fromRGBO(92, 182, 255, 1), // Light Blue
+    'Mountainous': Color.fromARGB(255, 253, 126, 117), // Light Red
     'Family-friendly': Color.fromARGB(255, 236, 96, 143), // Light Pink
     'Sunset-view': Color.fromARGB(255, 250, 196, 81), // Light Orange
   };
@@ -61,7 +62,7 @@ class _CategoryTextState extends State<CategoryText> {
             ),
           ),
           Container(
-            height: 35,
+            height: 50, // Increase the height of the category label box
             child: Row(
               children: [
                 Expanded(
@@ -88,7 +89,7 @@ class _CategoryTextState extends State<CategoryText> {
                               category,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 18, // Adjust the text size
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -103,74 +104,36 @@ class _CategoryTextState extends State<CategoryText> {
           ),
           dataFetched == null
               ? Container()
-              : SizedBox(
-                  height: 100,
-                  child: ListView.builder(
-                    itemCount: dataFetched.length,
-                    itemBuilder: (context, index) {
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: ListTile(
-                              title: Text(dataFetched[index]["Name"]),
-                              leading: Image.network(dataFetched[index]["image"]),
-                            ),
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: ClampingScrollPhysics(),
+                  itemCount: dataFetched.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: ListTile(
+                        title: Text(dataFetched[index]["Name"]),
+                        leading: Image.network(dataFetched[index]["image"]),
+                        trailing: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CampsiteDetailsScreen(dataFetched[index]),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green, // Forest green background
+                            onPrimary: Colors.black, // Text color
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      CampsiteDetailsScreen(dataFetched[index]),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.blue, // Background color
-                              onPrimary: Colors.black, // Text color
-                            ),
-                            child: Text('View details'),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                          child: Text('View Details'),
+                        ),
+                      ),
+                    );
+                  },
                 ),
         ],
-      ),
-    );
-  }
-}
-
-class CampsiteDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> campsiteData;
-
-  CampsiteDetailsScreen(this.campsiteData);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Campsite Details'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Name: ${campsiteData["Name"]}',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Image: ${campsiteData["image"]}',
-              style: TextStyle(fontSize: 16),
-            ),
-            // Add more details as needed
-          ],
-        ),
       ),
     );
   }
