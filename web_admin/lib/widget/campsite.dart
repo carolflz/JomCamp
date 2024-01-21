@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:web_admin/screen/update_screen.dart';
+import 'package:web_admin/widget/display_row.dart';
 
 class DisplayWidget extends StatelessWidget {
   const DisplayWidget({super.key});
@@ -35,34 +36,6 @@ class DisplayWidget extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-}
-
-class DisplayRow extends StatelessWidget {
-  final String title, description;
-  const DisplayRow({super.key, required this.title, required this.description});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 17,
-            color: Colors.grey[700],
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          description,
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.grey[700],
-          ),
-        ),
-      ],
     );
   }
 }
@@ -173,22 +146,6 @@ class Display extends StatelessWidget {
                         style: TextStyle(color: Colors.blueAccent),
                       ),
                       onPressed: () {
-                        Widget comfirmBut = TextButton(
-                            onPressed: () {
-                              FirebaseFirestore.instance
-                                  .collection('google_map_campsites')
-                                  .doc(id)
-                                  .delete();
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Comfirm'));
-
-                        Widget closeBut = TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Close'));
-
                         QuickAlert.show(
                           context: context,
                           type: QuickAlertType.confirm,
@@ -206,16 +163,6 @@ class Display extends StatelessWidget {
                           },
                           cancelBtnText: 'No',
                         );
-
-                        // showDialog(
-                        //     context: context,
-                        //     builder: (context) => AlertDialog(
-                        //           actions: [closeBut, comfirmBut],
-                        //           title: const Text('Delete Comfirmation'),
-                        //           contentPadding: const EdgeInsets.all(20),
-                        //           content: const Text(
-                        //               'Are you sure you want to delete this item?\n\nThis action cannot be undone. Please confirm if you want to proceed with deleting this data.'),
-                        //         ));
                       },
                     ),
                   ],
