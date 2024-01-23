@@ -12,7 +12,7 @@ class Post {
   String documentId;
   late String formattedDate;
 
-   Post({
+  Post({
     required this.userName,
     required this.postDate,
     this.likes = 0,
@@ -22,7 +22,6 @@ class Post {
     this.ratings = 0,
     this.imageTitle = 'Found new campsite at Bukit Rimba',
     this.documentId = '',
-    
   }) {
     // Convert Timestamp to String and store it in formattedDate
     formattedDate = postDate.toDate().toString();

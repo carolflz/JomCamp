@@ -35,30 +35,32 @@ class PostWidget extends StatelessWidget {
     this.location,
   });
 
-  List<Widget> _buildRatingStars(int rating) {
-    List<Widget> stars = [];
-    for (int i = 1; i <= 5; i++) {
-      stars.add(
-        Icon(
-          i <= rating ? Icons.star : Icons.star_border,
-          color: Color.fromARGB(255, 84, 83, 80),
-        ),
-      );
-    }
-    return stars;
-  }
+  // List<Widget> _buildRatingStars(int rating) {
+  //   List<Widget> stars = [];
+  //   for (int i = 1; i <= 5; i++) {
+  //     stars.add(
+  //       Icon(
+  //         i <= rating ? Icons.star : Icons.star_border,
+  //         color: Color.fromARGB(255, 84, 83, 80),
+  //       ),
+  //     );
+  //   }
+  //   return stars;
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ListTile(
+            contentPadding: EdgeInsets.all(0),
             leading: GestureDetector(
               onTap: onUsernameTap,
               child: CircleAvatar(
-                backgroundColor: const Color.fromARGB(255, 4, 98, 0),
+                backgroundColor: Color.fromARGB(255, 30, 32, 30),
                 child: Icon(Icons.person, color: Colors.white),
               ),
             ),
@@ -86,8 +88,10 @@ class PostWidget extends StatelessWidget {
                             return Text(
                               name,
                               style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: const Color.fromARGB(255, 4, 98, 0),
+                                decoration: TextDecoration.none,
+                                color: Color.fromARGB(255, 30, 32, 30),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
                               ),
                             );
                           })),
@@ -114,17 +118,17 @@ class PostWidget extends StatelessWidget {
                 ),
               ],
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (location != null) Text('Location: $location'),
-                Text(postDate),
-              ],
-            ),
+            // subtitle: Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            // children: [
+            //   if (location != null) Text('Location: $location'),
+            //   Text(postDate),
+            // ],
+            // ),
           ),
           if (imagePath != null)
             ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(5.0),
               child: Image.network(
                 imagePath!,
                 fit: BoxFit.cover,
@@ -135,10 +139,13 @@ class PostWidget extends StatelessWidget {
             padding: EdgeInsets.all(8.0),
             child: Text(
               imageTitle, // Displaying the image title
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+              ),
             ),
           ),
-          Row(children: _buildRatingStars(ratings)),
+          // Row(children: _buildRatingStars(ratings)),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

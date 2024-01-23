@@ -1,9 +1,11 @@
+import 'package:application/Screen/booking_screen.dart';
 import 'package:flutter/material.dart';
 
 class CampsiteDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> campsiteData;
+  final String id;
 
-  CampsiteDetailsScreen(this.campsiteData);
+  CampsiteDetailsScreen(this.campsiteData, this.id);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class CampsiteDetailsScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    campsiteData["Name"],
+                    campsiteData['Name'],
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -58,10 +60,14 @@ class CampsiteDetailsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      buildTag('Category', campsiteData["Category"]),
-                      SizedBox(height: 8),
-                      buildTag('Level', campsiteData["Level"]),
-                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          buildTag('Category', campsiteData["Category"]),
+                          SizedBox(width: 8),
+                          buildTag('Level', campsiteData["Level"]),
+                          SizedBox(height: 8),
+                        ],
+                      ),
                       buildUnderlinedText('Address', campsiteData["Address"]),
                       SizedBox(height: 8),
                       buildUnderlinedText(
@@ -70,7 +76,11 @@ class CampsiteDetailsScreen extends StatelessWidget {
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
-                            // Handle booking logic here
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => BookingScreen(id),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
@@ -139,7 +149,10 @@ class CampsiteDetailsScreen extends StatelessWidget {
       children: [
         Text(
           '$label',
-          style: TextStyle(fontSize: 16, decoration: TextDecoration.underline),
+          style: TextStyle(
+              fontSize: 20,
+              decoration: TextDecoration.underline,
+              fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 4),
         Text(

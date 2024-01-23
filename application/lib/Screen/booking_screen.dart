@@ -5,8 +5,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class BookingScreen extends StatefulWidget {
+  final String campsiteID;
+
+  BookingScreen(this.campsiteID);
+
   @override
-  State<BookingScreen> createState() => _BookingScreenState();
+  State<BookingScreen> createState() => _BookingScreenState(campsiteID);
 }
 
 class _BookingScreenState extends State<BookingScreen> {
@@ -14,6 +18,8 @@ class _BookingScreenState extends State<BookingScreen> {
   late TimeOfDay selectedTime;
   String campsiteName = '';
   String imageUrl = '';
+  String id = '';
+  _BookingScreenState(this.id);
 
   @override
   void initState() {
@@ -25,29 +31,21 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Future<void> fetchCampsiteInfo() async {
     try {
-      QuerySnapshot<Map<String, dynamic>> bookingQuery =
-          await FirebaseFirestore.instance.collection('Booking').get();
+      // ignore: unnecessary_null_comparison
+      if (id != null) {
+        DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
+            await FirebaseFirestore.instance
+                .collection('google_map_campsites')
+                .doc(id)
+                .get();
 
-      if (bookingQuery.docs.isNotEmpty) {
-        DocumentSnapshot<Map<String, dynamic>> bookingDoc =
-            bookingQuery.docs.first;
-        String campsiteId = bookingDoc.data()?['Campsite Id'];
+        String campsiteName =
+            campsiteDoc.data()?['Name'] ?? 'No campsite name found';
 
-        if (campsiteId != null) {
-          DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
-              await FirebaseFirestore.instance
-                  .collection('google_map_campsites')
-                  .doc(campsiteId)
-                  .get();
-
-          String campsiteName =
-              campsiteDoc.data()?['Name'] ?? 'No campsite name found';
-
-          setState(() {
-            this.campsiteName = campsiteName;
-            this.imageUrl = campsiteDoc.data()?['Image'] ?? '';
-          });
-        }
+        setState(() {
+          this.campsiteName = campsiteName;
+          this.imageUrl = campsiteDoc.data()?['image'] ?? '';
+        });
       }
     } catch (e) {
       setState(() {
@@ -190,7 +188,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   ElevatedButton(
                     child: Text("CONFIRM"),
                     onPressed: () async {
-                      await updateBooking(
+                      await addBooking(
                           selectedDate, selectedTime.format(context));
                       Navigator.pushNamed(context, '/payment');
                     },
@@ -225,26 +223,19 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Future<void> updateBooking(DateTime date, String time) async {
+  Future<void> addBooking(DateTime date, String time) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> bookingQuery =
-          await FirebaseFirestore.instance.collection('Booking').get();
-
-      if (bookingQuery.docs.isNotEmpty) {
-        DocumentSnapshot<Map<String, dynamic>> bookingDoc =
-            bookingQuery.docs.first;
-
-        if (bookingDoc.exists) {
-          await FirebaseFirestore.instance.runTransaction((transaction) async {
-            transaction.update(bookingDoc.reference, {
-              'Date': DateFormat('dd/MM/yyyy').format(date),
-              'Time': time,
-            });
-          });
-        }
-      }
+      final booking = FirebaseFirestore.instance.collection('Booking').doc();
+      final json = {
+        'Campsite Id': id,
+        'Date': DateFormat('dd/MM/yyyy').format(date),
+        'Time': time,
+        'User Id': "EvNNmetNv2NRYlmK6Qy6",
+      };
+      await booking.set(json);
+      print('Success adding booking');
     } catch (error) {
-      print('Error updating booking: $error');
+      print('Error add booking: $error');
     }
   }
 }

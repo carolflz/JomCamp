@@ -16,7 +16,7 @@ class AddCampsiteScreen extends StatelessWidget {
     String _selectedLevel = '';
     String _selectedCategory = '';
 
-    final level_item = ['Beginner', 'Intermidiate', 'Advance'];
+    final level_item = ['Beginner', 'Intermediate', 'Advance'];
     final category_item = [
       'Riverside',
       'Forested',

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 class CommunityAppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
-  final VoidCallback onLocalButtonPressed;
-  final VoidCallback onFollowingButtonPressed;
+  // final VoidCallback onLocalButtonPressed;
+  // final VoidCallback onFollowingButtonPressed;
   final VoidCallback onAddPostPressed;
-  final VoidCallback onNotificationsPressed;
+  // final VoidCallback onNotificationsPressed;
 
   CommunityAppBarWidget({
-    required this.onLocalButtonPressed,
-    required this.onFollowingButtonPressed,
+    // required this.onLocalButtonPressed,
+    // required this.onFollowingButtonPressed,
     required this.onAddPostPressed,
-    required this.onNotificationsPressed,
+    // required this.onNotificationsPressed,
   });
 
   @override
@@ -19,16 +19,16 @@ class CommunityAppBarWidget extends StatelessWidget
     return AppBar(
       title: Row(
         children: [
-          TextButton(
-            onPressed: onLocalButtonPressed,
-            child: Text('Local',
-                style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0))),
-          ),
-          TextButton(
-            onPressed: onFollowingButtonPressed,
-            child: Text('Following',
-                style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0))),
-          ),
+          // TextButton(
+          //   onPressed: onLocalButtonPressed,
+          //   child: Text('Local',
+          //       style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0))),
+          // ),
+          // TextButton(
+          //   onPressed: onFollowingButtonPressed,
+          //   child: Text('Following',
+          //       style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0))),
+          // ),
           // Other AppBar elements can follow here if needed
         ],
       ),
@@ -37,10 +37,10 @@ class CommunityAppBarWidget extends StatelessWidget
           icon: Icon(Icons.add),
           onPressed: onAddPostPressed,
         ),
-        IconButton(
-          icon: Icon(Icons.notifications),
-          onPressed: onNotificationsPressed,
-        ),
+        // IconButton(
+        //   icon: Icon(Icons.notifications),
+        //   onPressed: onNotificationsPressed,
+        // ),
       ],
     );
   }

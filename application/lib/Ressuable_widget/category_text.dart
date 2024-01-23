@@ -23,10 +23,10 @@ class _CategoryTextState extends State<CategoryText> {
     'Family-friendly',
     'Sunset-view',
   ];
-
+  List<String> id = [];
   Future<List<Map<String, dynamic>>> getData(category) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
-
+    id = [];
     return await db.collection("google_map_campsites").get().then(
       (querySnapshot) {
         List<Map<String, dynamic>> dataFromFirestore = [];
@@ -34,8 +34,10 @@ class _CategoryTextState extends State<CategoryText> {
         for (var doc in querySnapshot.docs) {
           if (doc.data()["Category"] == category) {
             dataFromFirestore.add(doc.data());
+            id.add(doc.id);
           }
         }
+
         print("Returning data");
         return dataFromFirestore;
       },
@@ -121,8 +123,8 @@ class _CategoryTextState extends State<CategoryText> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    CampsiteDetailsScreen(dataFetched[index]),
+                                builder: (context) => CampsiteDetailsScreen(
+                                    dataFetched[index], id[index]),
                               ),
                             );
                           },

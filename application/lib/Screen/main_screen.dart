@@ -1,6 +1,6 @@
 import 'package:application/Screen/booking_history_screen.dart';
-import 'package:application/Screen/booking_screen.dart';
 import 'package:application/Screen/comunity_screen.dart';
+import 'package:application/Screen/comunityflwing_screen.dart';
 import 'package:application/Screen/explore_screen.dart';
 import 'package:application/Screen/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,21 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int value;
+  const MainScreen({super.key, required this.value});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState(value);
 }
 
 class _MainScreenState extends State<MainScreen> {
+  _MainScreenState(this._pageIndex);
   int _pageIndex = 0;
 
   List<Widget> _pages = [
     ExploreScreen(),
-    BookingScreen(),
     ComunityScreen(),
     BookingHistoryScreen(),
     ProfileScreen(),
+    ComunityFollowingScreen(),
   ];
 
   @override
@@ -43,10 +45,6 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(LineAwesomeIcons
                   .search_location), //SvgPicture.asset('assets/icons/', width: 20)
               label: 'Explore',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.chat_bubble_2),
-              label: 'Community',
             ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.chat_bubble_2),

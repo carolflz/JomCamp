@@ -20,9 +20,10 @@ class LevelText extends State<LevelState> {
     'Advanced',
   ];
 
+  List<String> id = [];
   Future<List<Map<String, dynamic>>> getData(level) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
-
+    id = [];
     return await db.collection("google_map_campsites").get().then(
       (querySnapshot) {
         List<Map<String, dynamic>> dataFromFirestore = [];
@@ -30,6 +31,7 @@ class LevelText extends State<LevelState> {
         for (var doc in querySnapshot.docs) {
           if (doc.data()["Level"] == level) {
             dataFromFirestore.add(doc.data());
+            id.add(doc.id);
           }
         }
         print("Returning data");
@@ -116,8 +118,8 @@ class LevelText extends State<LevelState> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    CampsiteDetailsScreen(dataFetched[index]),
+                                builder: (context) => CampsiteDetailsScreen(
+                                    dataFetched[index], id[index]),
                               ),
                             );
                           },

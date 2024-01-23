@@ -11,17 +11,15 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Platform.isAndroid
       ? await Firebase.initializeApp(
           options: const FirebaseOptions(
-          apiKey: 'AIzaSyCIphtkBfmJAj352SUxmRaIqdLWe_6VmXo',
-          appId: '1:297160251276:android:59163e288a3197aa5aa8a9',
-          messagingSenderId: '297160251276',
-          projectId: 'jomcamp-8453d',
-        ))
+              apiKey: 'AIzaSyCIphtkBfmJAj352SUxmRaIqdLWe_6VmXo',
+              appId: '1:297160251276:android:59163e288a3197aa5aa8a9',
+              messagingSenderId: '297160251276',
+              projectId: 'jomcamp-8453d'))
       : await Firebase.initializeApp();
   await AwesomeNotifications().initialize('resource://drawable/res_app_icon', [
     NotificationChannel(
@@ -86,7 +84,10 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
-            return MaterialPageRoute(builder: (context) => MainScreen());
+            return MaterialPageRoute(
+                builder: (context) => MainScreen(
+                      value: 0,
+                    ));
 
           case '/notification-page':
             return MaterialPageRoute(builder: (context) {
@@ -112,7 +113,9 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MainScreen(),
+      home: const MainScreen(
+        value: 0,
+      ),
     );
   }
 }

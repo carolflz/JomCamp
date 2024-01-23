@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:application/Models/post_Model.dart';
 import 'package:application/Ressuable_widget/post_widget.dart';
-import 'package:application/Ressuable_widget/search_text_widget.dart';
-import 'package:application/Ressuable_widget/community_appbar_widget.dart';
 import 'package:application/Screen/profile_screen.dart';
-import 'package:application/Screen/add_post_screen.dart';
-import 'package:application/Screen/comunity_screen.dart';
 import 'package:application/Screen/posts_screen.dart';
 
 class ComunityFollowingScreen extends StatefulWidget {
@@ -19,7 +15,6 @@ class _ComunityFollowingScreenState extends State<ComunityFollowingScreen> {
   List<Post> followingPosts = [];
 
   void _fetchFollowingPosts() {
-    String name = "";
     FirebaseFirestore.instance
         .collection('Post')
         .snapshots()
@@ -29,7 +24,7 @@ class _ComunityFollowingScreenState extends State<ComunityFollowingScreen> {
             .map((doc) {
               final data = doc.data() as Map<String, dynamic>;
               return Post(
-                userName: name, // Replace with your field names
+                userName: doc['userId'], // Replace with your field names
                 postDate: data['postDate'], // Replace with your field names
                 likes: data['likes'], // Replace with your field names
                 isLikedByUser:
@@ -56,28 +51,11 @@ class _ComunityFollowingScreenState extends State<ComunityFollowingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CommunityAppBarWidget(
-        onLocalButtonPressed: () {
-          if (ModalRoute.of(context)?.settings.name != 'CommunityScreen') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => ComunityScreen()),
-            );
-          }
-        },
-        onFollowingButtonPressed: () {
-          // Do nothing, already on Following screen
-        },
-        onAddPostPressed: () => _navigateToAddPostScreen(context),
-        onNotificationsPressed: () {
-          // Implement action for Notifications button
-        },
-      ),
       body: Column(
         children: [
-          SearchText(), // Add SearchText widget here
           Expanded(
             child: ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 5),
               itemCount: followingPosts.length,
               itemBuilder: (context, index) {
                 return InkWell(
@@ -117,13 +95,6 @@ class _ComunityFollowingScreenState extends State<ComunityFollowingScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  void _navigateToAddPostScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddPostScreen()),
     );
   }
 

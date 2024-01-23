@@ -25,22 +25,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> fetchBookingDetails() async {
     try {
-      var bookingQuery = await FirebaseFirestore.instance.collection('Booking').get();
+      var bookingQuery =
+          await FirebaseFirestore.instance.collection('Booking').get();
       if (bookingQuery.docs.isNotEmpty) {
         var bookingData = bookingQuery.docs.first.data();
         var campsiteId = bookingData['Campsite Id'];
-        
+
         // Save date and time from booking
         bookingDate = bookingData['Date'] ?? '';
         bookingTime = bookingData['Time'] ?? '';
 
         if (campsiteId != null) {
-          var campsiteDoc = await FirebaseFirestore.instance.collection('google_map_campsites').doc(campsiteId).get();
+          var campsiteDoc = await FirebaseFirestore.instance
+              .collection('google_map_campsites')
+              .doc(campsiteId)
+              .get();
           var campsiteData = campsiteDoc.data();
           setState(() {
             campsiteName = campsiteData?['Name'] ?? 'No campsite name found';
             campsiteFee = campsiteData?['Fee'] ?? 0;
-            equipmentList = List<Map<String, dynamic>>.from(bookingData['equipments'] ?? []);
+            equipmentList = List<Map<String, dynamic>>.from(
+                bookingData['equipments'] ?? []);
             equipmentFee = bookingData['totalEquipmentFee'] ?? 0;
             totalFee = equipmentFee + deliveryFee + campsiteFee;
           });
@@ -76,8 +81,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
       itemBuilder: (context, index) {
         var item = equipmentList[index];
         return ListTile(
-          title: Text('${item['name']} x ${item['quantity']}', style: TextStyle(color: Colors.black)),
-          subtitle: Text('Price: RM ${item['equipmentFee']}', style: TextStyle(color: Colors.black.withOpacity(0.5))),
+          title: Text('${item['name']} x ${item['quantity']}',
+              style: TextStyle(color: Colors.black)),
+          subtitle: Text('Price: RM ${item['equipmentFee']}',
+              style: TextStyle(color: Colors.black.withOpacity(0.5))),
         );
       },
     );
@@ -127,15 +134,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Booking Details:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+            Text('Booking Details:',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
             SizedBox(height: 8),
             buildBookingInfo(),
             SizedBox(height: 12),
-            Text('Cart Items:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+            Text('Cart Items:',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
             SizedBox(height: 8),
             buildCartItems(),
             SizedBox(height: 12),
-            Text('Payment Fees:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+            Text('Payment Fees:',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
             SizedBox(height: 8),
             buildPaymentDetails(),
             SizedBox(height: 20),
@@ -164,40 +183,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   "delivery fee": "$deliveryFee",
                                 }
                               },
-                              // "description":
-                              //     "The payment transaction description.",
-                              // "payment_options": {
-                              //   "allowed_payment_method":
-                              //       "INSTANT_FUNDING_SOURCE"
-                              // },
-                              // "item_list": {
-                              //   "items": [
-                              //     {
-                              //       "name": "Apple",
-                              //       "quantity": 4,
-                              //       "price": '5',
-                              //       "currency": "MYR"
-                              //     },
-                              //     {
-                              //       "name": "Pineapple",
-                              //       "quantity": 5,
-                              //       "price": '10',
-                              //       "currency": "MYR"
-                              //     }
-                              //   ],
-
-                              // shipping address is not required though
-                              //   "shipping_address": {
-                              //     "recipient_name": "Raman Singh",
-                              //     "line1": "Delhi",
-                              //     "line2": "",
-                              //     "city": "Delhi",
-                              //     "country_code": "IN",
-                              //     "postal_code": "11001",
-                              //     "phone": "+00000000",
-                              //     "state": "Texas"
-                              //  },
-                              // }
                             }
                           ],
                           note: "Contact us for any questions on your order.",
