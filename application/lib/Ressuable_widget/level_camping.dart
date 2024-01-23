@@ -67,8 +67,8 @@ class LevelText extends State<LevelState> {
                     itemCount: _levelLabels.length,
                     itemBuilder: (context, index) {
                       final level = _levelLabels[index];
-                      final color =
-                          levelColors[level] ?? Colors.grey; // Default color if not found
+                      final color = levelColors[level] ??
+                          Colors.grey; // Default color if not found
 
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(5.0, 1.0, 10.0, 0),
@@ -116,13 +116,14 @@ class LevelText extends State<LevelState> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CampsiteDetailsScreen(dataFetched[index]),
+                                builder: (context) =>
+                                    CampsiteDetailsScreen(dataFetched[index]),
                               ),
                             );
                           },
-                              style: ElevatedButton.styleFrom(
-                            primary: Colors.green, // Forest green background
-                            onPrimary: Colors.black, // Text color
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            backgroundColor: Colors.green, // Text color
                           ),
                           child: Text('View Details'),
                         ),
@@ -135,4 +136,3 @@ class LevelText extends State<LevelState> {
     );
   }
 }
-

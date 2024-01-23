@@ -64,7 +64,8 @@ class CampsiteDetailsScreen extends StatelessWidget {
                       SizedBox(height: 8),
                       buildUnderlinedText('Address', campsiteData["Address"]),
                       SizedBox(height: 8),
-                      buildUnderlinedText('Description', campsiteData["Description"]),
+                      buildUnderlinedText(
+                          'Description', campsiteData["Description"]),
                       SizedBox(height: 16),
                       Center(
                         child: ElevatedButton(
@@ -72,14 +73,16 @@ class CampsiteDetailsScreen extends StatelessWidget {
                             // Handle booking logic here
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Color.fromARGB(255, 3, 61, 5), // Dark Green
+                            backgroundColor:
+                                Color.fromARGB(255, 3, 61, 5), // Dark Green
                             minimumSize: Size(200, 50), // Adjust button size
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Text(
                               'Book this campsite',
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
                         ),
@@ -120,7 +123,8 @@ class CampsiteDetailsScreen extends StatelessWidget {
         '$label: $value',
         style: TextStyle(
           fontSize: 16,
-          color: tagColor == Colors.amber.shade300 ? Colors.black : Colors.white,
+          color:
+              tagColor == Colors.amber.shade300 ? Colors.black : Colors.white,
         ),
       ),
       shape: RoundedRectangleBorder(

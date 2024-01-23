@@ -62,7 +62,8 @@ class _CategoryTextState extends State<CategoryText> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 10), // Add margin to move the category labels down
+            margin: EdgeInsets.only(
+                top: 10), // Add margin to move the category labels down
             height: 50, // Increase the height of the category label box
             child: Row(
               children: [
@@ -120,13 +121,14 @@ class _CategoryTextState extends State<CategoryText> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CampsiteDetailsScreen(dataFetched[index]),
+                                builder: (context) =>
+                                    CampsiteDetailsScreen(dataFetched[index]),
                               ),
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.green, // Forest green background
-                            onPrimary: Colors.black, // Text color
+                            foregroundColor: Colors.black,
+                            backgroundColor: Colors.green, // Text color
                           ),
                           child: Text('View Details'),
                         ),

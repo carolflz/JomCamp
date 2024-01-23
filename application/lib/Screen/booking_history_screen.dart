@@ -18,9 +18,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
   }
 
   void fetchBookings() async {
-    QuerySnapshot<Map<String, dynamic>> bookingQuery = await FirebaseFirestore.instance
-      .collection('Booking')
-      .get();
+    QuerySnapshot<Map<String, dynamic>> bookingQuery =
+        await FirebaseFirestore.instance.collection('Booking').get();
 
     List<Map<String, dynamic>> tempUpcoming = [];
     List<Map<String, dynamic>> tempPrevious = [];
@@ -29,12 +28,14 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
       DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
       String campsiteId = doc.data()['Campsite Id'];
 
-      DocumentSnapshot<Map<String, dynamic>> campsiteDoc = await FirebaseFirestore.instance
-        .collection('google_map_campsites')
-        .doc(campsiteId)
-        .get();
+      DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
+          await FirebaseFirestore.instance
+              .collection('google_map_campsites')
+              .doc(campsiteId)
+              .get();
 
-      String campsiteName = campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+      String campsiteName =
+          campsiteDoc.data()?['Name'] ?? 'No campsite name found';
 
       Map<String, dynamic> booking = {
         ...doc.data(),
@@ -93,7 +94,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     );
   }
 
-  Widget buildBookingsList(List<Map<String, dynamic>> bookings, {required bool isUpcoming}) {
+  Widget buildBookingsList(List<Map<String, dynamic>> bookings,
+      {required bool isUpcoming}) {
     return ListView.builder(
       itemCount: bookings.length,
       itemBuilder: (context, index) {
@@ -104,23 +106,23 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Date: ${booking['Date']}', style: TextStyle(fontSize: 16)),
-                Text('Time: ${booking['Time']}', style: TextStyle(fontSize: 16)),
+                Text('Date: ${booking['Date']}',
+                    style: TextStyle(fontSize: 16)),
+                Text('Time: ${booking['Time']}',
+                    style: TextStyle(fontSize: 16)),
               ],
             ),
-            trailing: isUpcoming ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () => editBooking(booking), 
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => removeBooking(booking),
-                ),
-              ],
-            ) : null,
+            trailing: isUpcoming
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () => removeBooking(booking),
+                      ),
+                    ],
+                  )
+                : null,
           ),
         );
       },
@@ -138,9 +140,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     if (newDate != null) {
       TimeOfDay? newTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.fromDateTime(
-          DateFormat('HH:mm').parse(booking['Time'])
-        ),
+        initialTime:
+            TimeOfDay.fromDateTime(DateFormat('HH:mm').parse(booking['Time'])),
       );
 
       if (newTime != null) {
@@ -149,8 +150,12 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     }
   }
 
-  void updateBookingInFirestore(Map<String, dynamic> booking, DateTime newDate, TimeOfDay newTime) async {
-    await FirebaseFirestore.instance.collection('Booking').doc(booking['id']).update({
+  void updateBookingInFirestore(
+      Map<String, dynamic> booking, DateTime newDate, TimeOfDay newTime) async {
+    await FirebaseFirestore.instance
+        .collection('Booking')
+        .doc(booking['id'])
+        .update({
       'Date': DateFormat('dd/MM/yyyy').format(newDate),
       'Time': newTime.format(context),
     });
@@ -165,8 +170,11 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     bool confirmDelete = await showDeleteConfirmationDialog(context);
 
     if (confirmDelete) {
-      await FirebaseFirestore.instance.collection('Booking').doc(booking['id']).delete();
-      
+      await FirebaseFirestore.instance
+          .collection('Booking')
+          .doc(booking['id'])
+          .delete();
+
       setState(() {
         if (upcomingBookings.contains(booking)) {
           upcomingBookings.remove(booking);
@@ -179,23 +187,24 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
 
   Future<bool> showDeleteConfirmationDialog(BuildContext context) async {
     return await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Confirm Deletion"),
-          content: Text("Are you sure you want to delete this booking?"),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text("Cancel"),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            ElevatedButton(
-              child: Text("Delete"),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    ) ?? false;
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Confirm Deletion"),
+              content: Text("Are you sure you want to delete this booking?"),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text("Cancel"),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                ElevatedButton(
+                  child: Text("Delete"),
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
   }
 }

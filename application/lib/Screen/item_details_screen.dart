@@ -87,7 +87,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
         child: Column(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(15.0), // Set the corner radius here
+              borderRadius:
+                  BorderRadius.circular(15.0), // Set the corner radius here
               child: Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
@@ -111,7 +112,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  "${widget.item['Item Name']}",
+                  "${widget.item['Name']}",
                   style: TextStyle(
                     fontSize: 21,
                     fontWeight: FontWeight.bold,
@@ -268,7 +269,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                     } else {
                                       currentEquipmentList.add({
                                         'id': widget.item.id,
-                                        'name': widget.item['Item Name'],
+                                        'name': widget.item['Name'],
                                         'price': widget.item['Rental Price'],
                                         'quantity': quantity,
                                         'equipmentFee': (widget
@@ -297,7 +298,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                       'equipments': [
                                         {
                                           'id': widget.item.id,
-                                          'name': widget.item['Item Name'],
+                                          'name': widget.item['Name'],
                                           'price': widget.item['Rental Price'],
                                           'quantity': quantity,
                                           'equipmentFee':
@@ -343,7 +344,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           padding: EdgeInsets.all(10.0),
                           backgroundColor: Colors.yellow.shade900,
                           fixedSize: Size(200, 50),
-                          textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
+                          textStyle:
+                              TextStyle(fontSize: 18, letterSpacing: 5.0),
                           shape: StadiumBorder(),
                         ),
                       ),

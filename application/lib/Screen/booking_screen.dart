@@ -25,19 +25,23 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Future<void> fetchCampsiteInfo() async {
     try {
-      QuerySnapshot<Map<String, dynamic>> bookingQuery = await FirebaseFirestore.instance
-          .collection('Booking')
-          .get();
+      QuerySnapshot<Map<String, dynamic>> bookingQuery =
+          await FirebaseFirestore.instance.collection('Booking').get();
 
       if (bookingQuery.docs.isNotEmpty) {
-        DocumentSnapshot<Map<String, dynamic>> bookingDoc = bookingQuery.docs.first;
+        DocumentSnapshot<Map<String, dynamic>> bookingDoc =
+            bookingQuery.docs.first;
         String campsiteId = bookingDoc.data()?['Campsite Id'];
 
         if (campsiteId != null) {
-          DocumentSnapshot<Map<String, dynamic>> campsiteDoc = 
-              await FirebaseFirestore.instance.collection('google_map_campsites').doc(campsiteId).get();
+          DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
+              await FirebaseFirestore.instance
+                  .collection('google_map_campsites')
+                  .doc(campsiteId)
+                  .get();
 
-          String campsiteName = campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+          String campsiteName =
+              campsiteDoc.data()?['Name'] ?? 'No campsite name found';
 
           setState(() {
             this.campsiteName = campsiteName;
@@ -50,9 +54,9 @@ class _BookingScreenState extends State<BookingScreen> {
         campsiteName = 'Error loading campsite name';
         imageUrl = 'Error loading campsite image';
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load campsite details. Please try again later.'))
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              'Failed to load campsite details. Please try again later.')));
     }
   }
 
@@ -88,12 +92,14 @@ class _BookingScreenState extends State<BookingScreen> {
               height: 250,
               width: double.infinity,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(15.0), // Set the corner radius here
+                borderRadius:
+                    BorderRadius.circular(15.0), // Set the corner radius here
                 child: imageUrl.isNotEmpty
                     ? Image.network(imageUrl, fit: BoxFit.cover)
                     : Container(
                         color: Colors.black.withOpacity(0.2),
-                        child: Icon(Icons.image, size: 128, color: Colors.white),
+                        child:
+                            Icon(Icons.image, size: 128, color: Colors.white),
                       ),
               ),
             ),
@@ -152,8 +158,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 label: Text(
                     '   SELECT TIME    -    ${selectedTime.format(context)}    '),
                 style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.black,
                 ),
               ),
             ]),
@@ -184,7 +190,8 @@ class _BookingScreenState extends State<BookingScreen> {
                   ElevatedButton(
                     child: Text("CONFIRM"),
                     onPressed: () async {
-                      await updateBooking(selectedDate, selectedTime.format(context));
+                      await updateBooking(
+                          selectedDate, selectedTime.format(context));
                       Navigator.pushNamed(context, '/payment');
                     },
                     style: ElevatedButton.styleFrom(
@@ -218,29 +225,26 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-Future<void> updateBooking(DateTime date, String time) async {
-  try {
-    QuerySnapshot<Map<String, dynamic>> bookingQuery =
-        await FirebaseFirestore.instance.collection('Booking').get();
+  Future<void> updateBooking(DateTime date, String time) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> bookingQuery =
+          await FirebaseFirestore.instance.collection('Booking').get();
 
-    if (bookingQuery.docs.isNotEmpty) {
-      DocumentSnapshot<Map<String, dynamic>> bookingDoc = bookingQuery.docs.first;
+      if (bookingQuery.docs.isNotEmpty) {
+        DocumentSnapshot<Map<String, dynamic>> bookingDoc =
+            bookingQuery.docs.first;
 
-      if (bookingDoc.exists) {
-        await FirebaseFirestore.instance.runTransaction((transaction) async {
-          DocumentSnapshot<Map<String, dynamic>> freshBookingDoc =
-              await transaction.get(bookingDoc.reference);
-
-          transaction.update(bookingDoc.reference, {
-            'Date': DateFormat('dd/MM/yyyy').format(date),
-            'Time': time,
+        if (bookingDoc.exists) {
+          await FirebaseFirestore.instance.runTransaction((transaction) async {
+            transaction.update(bookingDoc.reference, {
+              'Date': DateFormat('dd/MM/yyyy').format(date),
+              'Time': time,
+            });
           });
-        });
+        }
       }
+    } catch (error) {
+      print('Error updating booking: $error');
     }
-  } catch (error) {
-    print('Error updating booking: $error');
   }
-}
-
 }

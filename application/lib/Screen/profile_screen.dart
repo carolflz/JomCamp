@@ -1,5 +1,6 @@
 import 'package:application/Ressuable_widget/profile_menu.dart';
 import 'package:application/Ressuable_widget/section_heading.dart';
+import 'package:application/api/notification_controller.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,6 +24,28 @@ class _ProfileScreenState extends State<ProfileScreen>
         children: <Widget>[
           buildTop(),
           buildContent(),
+          TextButton(
+            onPressed: createCampsiteAlertNotification,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.notification_add,
+                  color: Colors.blue, // You can set the color you prefer
+                ),
+                SizedBox(
+                    width: 8.0), // Add some spacing between the icon and text
+                Text(
+                  'Create Campsite Alert Notification',
+                  style: TextStyle(
+                    color: Colors.blue, // You can set the color you prefer
+                    fontWeight: FontWeight
+                        .bold, // You can set the font weight you prefer
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

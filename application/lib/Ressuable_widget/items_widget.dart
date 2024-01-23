@@ -29,7 +29,8 @@ class ItemsWidget extends StatelessWidget {
           childAspectRatio: (160 / 210),
           children: [
             for (var item in items)
-              if (item['Type'] == category) ItemWidget(item: item, category: category),
+              if (item['Type'] == category)
+                ItemWidget(item: item, category: category),
           ],
         );
       },
@@ -45,7 +46,7 @@ class ItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String title = item['Item Name'];
+    String title = item['Name'];
     String condition = item['Condition'];
     int price = (item['Rental Price'] as int);
     String imageUrl = item['Image'];
@@ -69,7 +70,7 @@ class ItemWidget extends StatelessWidget {
           InkWell(
             onTap: () {
               Navigator.push(
-                context, 
+                context,
                 MaterialPageRoute(
                   builder: (context) => ItemDetailsScreen(
                     item: item,
@@ -78,12 +79,12 @@ class ItemWidget extends StatelessWidget {
               );
             },
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(15.0), 
+              borderRadius: BorderRadius.circular(15.0),
               child: Container(
                 width: 140,
                 height: 100,
                 child: Image.network(
-                  imageUrl, 
+                  imageUrl,
                   fit: BoxFit.cover,
                 ),
               ),

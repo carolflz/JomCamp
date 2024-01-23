@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:application/Screen/error_screen.dart';
 import 'package:application/Screen/main_screen.dart';
-import 'package:application/Screen/navigate_screen.dart';
 import 'package:application/Screen/rental_screen.dart';
 import 'package:application/Screen/payment_screen.dart';
 import 'package:application/api/cart_provider.dart';
@@ -88,9 +87,6 @@ class _MyAppState extends State<MyApp> {
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (context) => MainScreen());
-
-          case '/navigator-page':
-            return MaterialPageRoute(builder: (context) => NavigateScreen());
 
           case '/notification-page':
             return MaterialPageRoute(builder: (context) {

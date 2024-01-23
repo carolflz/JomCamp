@@ -5,6 +5,7 @@ import 'package:application/Screen/explore_screen.dart';
 import 'package:application/Screen/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -39,8 +40,8 @@ class _MainScreenState extends State<MainScreen> {
           selectedItemColor: Colors.yellow.shade900,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons
-                  .search), //SvgPicture.asset('assets/icons/', width: 20)
+              icon: Icon(LineAwesomeIcons
+                  .search_location), //SvgPicture.asset('assets/icons/', width: 20)
               label: 'Explore',
             ),
             BottomNavigationBarItem(
@@ -48,8 +49,8 @@ class _MainScreenState extends State<MainScreen> {
               label: 'Community',
             ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.cart_fill),
-              label: 'Equipment',
+              icon: Icon(CupertinoIcons.chat_bubble_2),
+              label: 'Community',
             ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.bookmark),
