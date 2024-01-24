@@ -3,16 +3,36 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class CampsiteDetailsScreen extends StatelessWidget {
+class CampsiteDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> campsiteData;
   final String id;
 
   CampsiteDetailsScreen(this.campsiteData, this.id);
 
+  @override
+  _CampsiteDetailsScreenState createState() => _CampsiteDetailsScreenState();
+}
+
+class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
+  ScrollController _scrollController = ScrollController();
+  bool isNameWhite = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController.addListener(() {
+      setState(() {
+        // Check if the scroll offset is greater than a certain value (adjust as needed)
+        isNameWhite = _scrollController.offset < 200;
+      });
+    });
+  }
+
   // Function to handle the Google Maps navigation
   void navigateToGoogleMaps() async {
     // Extract GeoPoint from campsiteData
-    GeoPoint geoPoint = campsiteData['LatLng'];
+    GeoPoint geoPoint = widget.campsiteData['LatLng'];
 
     // Check if GeoPoint is not null
     if (geoPoint != null) {
@@ -20,7 +40,8 @@ class CampsiteDetailsScreen extends StatelessWidget {
       double longitude = geoPoint.longitude ?? 0.0;
 
       // Open Google Maps with the specified LatLng
-      String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+      String googleMapsUrl =
+          'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
       if (await canLaunch(googleMapsUrl)) {
         await launch(googleMapsUrl);
       } else {
@@ -37,6 +58,7 @@ class CampsiteDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           SliverAppBar(
             expandedHeight: 300,
@@ -44,7 +66,7 @@ class CampsiteDetailsScreen extends StatelessWidget {
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back,
-                color: Colors.white,
+                color: isNameWhite ? Colors.white : Colors.black,
                 size: 30,
               ),
               onPressed: () {
@@ -57,9 +79,9 @@ class CampsiteDetailsScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    campsiteData['Name'],
+                    widget.campsiteData['Name'],
                     style: TextStyle(
-                      color: Colors.white,
+                      color: isNameWhite ? Colors.white : Colors.black,
                       fontSize: 18,
                       shadows: [
                         Shadow(
@@ -73,7 +95,7 @@ class CampsiteDetailsScreen extends StatelessWidget {
                 ),
               ),
               background: Image.network(
-                campsiteData["image"],
+                widget.campsiteData["image"],
                 fit: BoxFit.cover,
               ),
             ),
@@ -89,23 +111,23 @@ class CampsiteDetailsScreen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          buildTag('Category', campsiteData["Category"]),
+                          buildTag('Category', widget.campsiteData["Category"]),
                           SizedBox(height: 5),
-                          buildTag('Level', campsiteData["Level"]),
+                          buildTag('Level', widget.campsiteData["Level"]),
                           SizedBox(height: 24),
                         ],
                       ),
-                      buildUnderlinedText('Address', campsiteData["Address"]),
+                      buildUnderlinedText('Address', widget.campsiteData["Address"]),
                       SizedBox(height: 22),
                       buildUnderlinedText(
-                          'Description', campsiteData["Description"]),
+                          'Description', widget.campsiteData["Description"]),
                       SizedBox(height: 36),
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => BookingScreen(id),
+                                builder: (context) => BookingScreen(widget.id),
                               ),
                             );
                           },
@@ -129,7 +151,7 @@ class CampsiteDetailsScreen extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: navigateToGoogleMaps,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF3D251E), // Button color #836953
+                            backgroundColor: Color(0xFF3D251E), // Button color #3D251E
                             minimumSize: Size(200, 50), // Adjust button size
                           ),
                           child: Padding(
