@@ -26,6 +26,7 @@ class MyMapState extends State<MyMap> {
         position: LatLng(5.475530644247125, 100.19025415226275),
         title: 'Lazyboys Campsite',
         snippet: 'Tap for navigation',
+        
       ));
       allMarkers.add(_createMarker(
         id: 'value2',
@@ -144,7 +145,6 @@ class MyMapState extends State<MyMap> {
         snippet: 'Tap for navigation',
       ));
 
-// Below is havent added to firebase
 
       allMarkers.add(_createMarker(
         id: 'value19',

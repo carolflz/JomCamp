@@ -9,11 +9,11 @@ class CategoryText extends StatefulWidget {
 
 class _CategoryTextState extends State<CategoryText> {
   final Map<String, Color> categoryColor = {
-    'Forested': Color.fromARGB(255, 150, 212, 78), // Light Green
-    'Riverside': Color.fromRGBO(92, 182, 255, 1), // Light Blue
-    'Mountainous': Color.fromARGB(255, 253, 126, 117), // Light Red
-    'Family-friendly': Color.fromARGB(255, 236, 96, 143), // Light Pink
-    'Sunset-view': Color.fromARGB(255, 250, 196, 81), // Light Orange
+    'Forested': Color(0xFF043927),
+    'Riverside': Color(0xFF043927),
+    'Mountainous': Color(0xFF043927),
+    'Family-friendly': Color(0xFF043927),
+    'Sunset-view': Color(0xFF043927), // #5bb450/ Light Orange
   };
 
   final List<String> _categoryLabels = [
@@ -28,7 +28,7 @@ class _CategoryTextState extends State<CategoryText> {
     FirebaseFirestore db = FirebaseFirestore.instance;
     id = [];
     return await db.collection("google_map_campsites").get().then(
-      (querySnapshot) {
+          (querySnapshot) {
         List<Map<String, dynamic>> dataFromFirestore = [];
         print("Successfully completed");
         for (var doc in querySnapshot.docs) {
@@ -65,8 +65,9 @@ class _CategoryTextState extends State<CategoryText> {
           ),
           Container(
             margin: EdgeInsets.only(
-                top: 10), // Add margin to move the category labels down
-            height: 50, // Increase the height of the category label box
+              top: 3,
+            ),
+            height: 50,
             child: Row(
               children: [
                 Expanded(
@@ -93,10 +94,15 @@ class _CategoryTextState extends State<CategoryText> {
                               category,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 18, // Adjust the text size
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                          ),
+                          labelPadding: EdgeInsets.zero,
+                          visualDensity: VisualDensity(
+                            vertical: -4,
+                            horizontal: -4,
                           ),
                         ),
                       );
@@ -109,35 +115,37 @@ class _CategoryTextState extends State<CategoryText> {
           dataFetched == null
               ? Container()
               : ListView.builder(
-                  shrinkWrap: true,
-                  physics: ClampingScrollPhysics(),
-                  itemCount: dataFetched.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListTile(
-                        title: Text(dataFetched[index]["Name"]),
-                        leading: Image.network(dataFetched[index]["image"]),
-                        trailing: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CampsiteDetailsScreen(
-                                    dataFetched[index], id[index]),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black,
-                            backgroundColor: Colors.green, // Text color
+            shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
+            itemCount: dataFetched.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: ListTile(
+                  title: Text(dataFetched[index]["Name"]),
+                  leading: Image.network(dataFetched[index]["image"]),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CampsiteDetailsScreen(
+                            dataFetched[index],
+                            id[index],
                           ),
-                          child: Text('View Details'),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.green,
+                    ),
+                    child: Text('View Details'),
+                  ),
                 ),
+              );
+            },
+          ),
         ],
       ),
     );

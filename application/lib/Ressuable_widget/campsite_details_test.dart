@@ -60,19 +60,21 @@ class CampsiteDetailsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          buildTag('Category', campsiteData["Category"]),
-                          SizedBox(width: 8),
-                          buildTag('Level', campsiteData["Level"]),
-                          SizedBox(height: 8),
-                        ],
-                      ),
+                Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildTag('Category', campsiteData["Category"]),
+                  SizedBox(height: 5),
+                  buildTag('Level', campsiteData["Level"]),
+                  SizedBox(height: 24),
+                  // Add more tags or information as needed
+                ],
+              ),
                       buildUnderlinedText('Address', campsiteData["Address"]),
-                      SizedBox(height: 8),
+                      SizedBox(height: 22),
                       buildUnderlinedText(
                           'Description', campsiteData["Description"]),
-                      SizedBox(height: 16),
+                      SizedBox(height: 36),
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
@@ -87,6 +89,7 @@ class CampsiteDetailsScreen extends StatelessWidget {
                                 Color.fromARGB(255, 3, 61, 5), // Dark Green
                             minimumSize: Size(200, 50), // Adjust button size
                           ),
+                          
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Text(
@@ -112,22 +115,24 @@ class CampsiteDetailsScreen extends StatelessWidget {
   Widget buildTag(String label, String? value) {
     final Map<String, Map<String, Color>> tagColors = {
       'Category': {
-        'Forested': Color.fromARGB(255, 150, 212, 78),
-        'Riverside': Color.fromRGBO(92, 182, 255, 1),
-        'Mountainous': Color.fromARGB(255, 253, 126, 117),
-        'Family-friendly': Color.fromARGB(255, 236, 96, 143),
-        'Sunset-view': Color.fromARGB(255, 250, 196, 81),
+       'Forested': Color(0xFF043927),
+        'Riverside': Color(0xFF043927),
+        'Mountainous': Color(0xFF043927),
+        'Family-friendly': Color(0xFF043927),
+        'Sunset-view': Color(0xFF043927),
       },
       'Level': {
-        'Beginner': Colors.green.shade300,
-        'Intermediate': Colors.amber.shade300,
-        'Advanced': Colors.deepOrange.shade300,
+      'Beginner': Color(0xFF073B3A),
+      'Intermediate': Color(0xFF073B3A),
+      'Advanced': Color(0xFF073B3A),
       },
     };
 
-    final Color tagColor = tagColors[label]?[value ?? ''] ?? Colors.grey;
+    final Color tagColor = tagColors[label]?[value ?? ''] ?? Color(0xFF073B3A);
+
 
     return Chip(
+      
       backgroundColor: tagColor,
       label: Text(
         '$label: $value',

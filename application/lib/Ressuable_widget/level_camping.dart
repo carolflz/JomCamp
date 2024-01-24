@@ -9,9 +9,9 @@ class LevelState extends StatefulWidget {
 
 class LevelText extends State<LevelState> {
   final Map<String, Color> levelColors = {
-    'Beginner': Colors.green.shade300,
-    'Intermediate': Colors.amber.shade300,
-    'Advanced': Colors.deepOrange.shade300,
+    'Beginner': Color(0xFF073B3A),
+    'Intermediate': Color(0xFF073B3A),
+    'Advanced': Color(0xFF073B3A),
   };
 
   final List<String> _levelLabels = [
@@ -69,8 +69,8 @@ class LevelText extends State<LevelState> {
                     itemCount: _levelLabels.length,
                     itemBuilder: (context, index) {
                       final level = _levelLabels[index];
-                      final color = levelColors[level] ??
-                          Colors.grey; // Default color if not found
+                      final color =
+                          levelColors[level] ?? Colors.grey; // Default color if not found
 
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(5.0, 1.0, 10.0, 0),
@@ -92,6 +92,11 @@ class LevelText extends State<LevelState> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                          ),
+                          labelPadding: EdgeInsets.zero,
+                          visualDensity: VisualDensity(
+                            vertical: -4,
+                            horizontal: -4,
                           ),
                         ),
                       );
@@ -119,7 +124,9 @@ class LevelText extends State<LevelState> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => CampsiteDetailsScreen(
-                                    dataFetched[index], id[index]),
+                                  dataFetched[index],
+                                  id[index],
+                                ),
                               ),
                             );
                           },
