@@ -60,6 +60,9 @@ class LevelText extends State<LevelState> {
             ),
           ),
           Container(
+            margin: EdgeInsets.only(
+              top: 10,
+            ),
             height: 50,
             child: Row(
               children: [
@@ -108,6 +111,7 @@ class LevelText extends State<LevelState> {
           ),
           dataFetched == null
               ? Container()
+              
               : ListView.builder(
                   shrinkWrap: true,
                   physics: ClampingScrollPhysics(),

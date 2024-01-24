@@ -65,7 +65,7 @@ class _CategoryTextState extends State<CategoryText> {
           ),
           Container(
             margin: EdgeInsets.only(
-              top: 3,
+              top: 10,
             ),
             height: 50,
             child: Row(
@@ -119,29 +119,26 @@ class _CategoryTextState extends State<CategoryText> {
             physics: ClampingScrollPhysics(),
             itemCount: dataFetched.length,
             itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ListTile(
-                  title: Text(dataFetched[index]["Name"]),
-                  leading: Image.network(dataFetched[index]["image"]),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CampsiteDetailsScreen(
-                            dataFetched[index],
-                            id[index],
-                          ),
+              return ListTile(
+                title: Text(dataFetched[index]["Name"]),
+                leading: Image.network(dataFetched[index]["image"]),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CampsiteDetailsScreen(
+                          dataFetched[index],
+                          id[index],
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: Colors.green,
-                    ),
-                    child: Text('View Details'),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.green,
                   ),
+                  child: Text('View Details'),
                 ),
               );
             },

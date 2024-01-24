@@ -46,9 +46,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
             height: 20,
           ),
           CategoryText(),
-          SizedBox(
-            height: 50, // Adjust the height according to your preference
-          ),
           LevelState(),
         ],
       ),

@@ -1,3 +1,5 @@
+import 'package:application/Ressuable_widget/campsite_details_test.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SearchText extends StatefulWidget {
@@ -8,11 +10,33 @@ class SearchText extends StatefulWidget {
 }
 
 class _SearchTextState extends State<SearchText> {
-  final campsiteList = [
-    "Campsite 1",
-    "Campsite 2",
-    "Campsite 3",
-  ];
+  
+  List<Map<String, dynamic>> campsiteList = [];
+  List<String> id = [];
+  Future<List<Map<String, dynamic>>> getData() async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    return await db.collection("google_map_campsites").get().then(
+      (querySnapshot) {
+        print("Successfully completed");
+        for (var doc in querySnapshot.docs) {
+          campsiteList.add(doc.data());
+          id.add(doc.id);
+        }
+        return campsiteList;
+      },
+      onError: (e) {
+        print("Error: $e");
+        return null;
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +56,15 @@ class _SearchTextState extends State<SearchText> {
         return List<ListTile>.generate(
           campsiteList.length,
           (int index) => ListTile(
-            title: Text(campsiteList[index]),
+            title: Text(campsiteList[index]["Name"]),
             onTap: () {
-              controller.text = campsiteList[index];
-              controller.closeView(campsiteList[index]);
+              controller.closeView(campsiteList[index]["Name"]);
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => CampsiteDetailsScreen(campsiteList[index], id[index])
+                )
+              );
             },
           ),
         );
