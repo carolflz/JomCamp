@@ -42,6 +42,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
             height: 10,
           ),
           CategoryText(),
+          SizedBox(
+            height: 50,
+          ),
           LevelState(),
           SizedBox(
             height: 20,

@@ -12,6 +12,7 @@ class SearchText extends StatefulWidget {
 class _SearchTextState extends State<SearchText> {
   List<Map<String, dynamic>> campsiteList = [];
   List<String> id = [];
+
   // reads data from firestore
   Future<List<Map<String, dynamic>>> getData() async {
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -40,30 +41,38 @@ class _SearchTextState extends State<SearchText> {
   @override
   Widget build(BuildContext context) {
     return SearchAnchor(
-        builder: (BuildContext context, SearchController controller) {
-      return SearchBar(
-        controller: controller,
-        leading: const Icon(Icons.search),
-        backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFD2B48C)),
-        hintText: 'Search For Campsite',
-        onTap: () => controller.openView(),
-        onChanged: (value) => controller.openView(),
-      );
-    }, suggestionsBuilder: (BuildContext context, SearchController controller) {
-      return List<ListTile>.generate(
-        campsiteList.length,
-        (int index) => ListTile(
-          title: Text(campsiteList[index]["Name"]),
-          onTap: () {
-            controller.closeView(campsiteList[index]["Name"]);
-            Navigator.push(
+      builder: (BuildContext context, SearchController controller) {
+        return SearchBar(
+          controller: controller,
+          leading: const Icon(Icons.search),
+          backgroundColor: MaterialStateProperty.all<Color>(
+            Color.fromARGB(255, 171, 171, 171).withOpacity(0.3),
+          ),
+          hintText: 'Search For Campsite',
+          onTap: () => controller.openView(),
+          onChanged: (value) => controller.openView(),
+          elevation: MaterialStateProperty.all<double?>(0),
+
+        );
+      },
+      suggestionsBuilder: (BuildContext context, SearchController controller) {
+        return List<ListTile>.generate(
+          campsiteList.length,
+          (int index) => ListTile(
+            title: Text(campsiteList[index]["Name"]),
+            onTap: () {
+              controller.closeView(campsiteList[index]["Name"]);
+              Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        CampsiteDetailsScreen(campsiteList[index], id[index])));
-          },
-        ),
-      );
-    });
+                  builder: (context) =>
+                      CampsiteDetailsScreen(campsiteList[index], id[index]),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 }
