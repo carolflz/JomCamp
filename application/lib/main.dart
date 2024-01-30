@@ -38,7 +38,7 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) =>
-          CartProvider(), // Create an instance of your data model
+          CartProvider(), 
       child: const MyApp(),
     ),
   );

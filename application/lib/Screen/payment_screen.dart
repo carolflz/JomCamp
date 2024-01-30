@@ -2,6 +2,7 @@
 // sb-o4cxr28928219@personal.example.com
 // 5X&$zDi)
 
+import 'package:application/Screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:application/Screen/booking_history_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -197,11 +198,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       .collection('Booking')
                       .doc(widget.bookingId)
                       .update({'Status': 'Paid'});
-                      Navigator.push(
-                        context,
+                      Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                          builder: (context) => BookingHistoryScreen(),
+                          builder: (context) => MainScreen(value: 2), 
                         ),
+                        (route) => false,
                       );
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => PaypalCheckout(

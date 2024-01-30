@@ -103,9 +103,11 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
             buildBookingsList(previousBookings, isUpcoming: false),
           ],
         ),
+        
       ),
     );
   }
+  
 
   Widget buildBookingsList(List<Map<String, dynamic>> bookings,
       {required bool isUpcoming}) {
@@ -144,6 +146,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
       },
     );
   }
+  
 
   void editBooking(Map<String, dynamic> booking) async {
     DateTime? newDate = await showDatePicker(

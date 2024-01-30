@@ -606,6 +606,10 @@ Future<void> launchMaps(double lat, double lng) async {
   final String googleMapsUrl =
       'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
 
+  if (!mounted) {
+    return;
+  }
+
   await launchUrl(Uri.parse(googleMapsUrl));
 }
 
