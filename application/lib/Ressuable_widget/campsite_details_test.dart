@@ -151,9 +151,13 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen>
                               child: TabBarView(
                                 controller: _tabController,
                                 children: [
-                                  buildUnderlinedText(widget.campsiteData["Address"]),
-                                  buildUnderlinedText('RM${widget.campsiteData["Fee"].toStringAsFixed(2)}', addPerDay: true),
-                                  buildUnderlinedText(widget.campsiteData["Description"]),
+                                  buildUnderlinedText(
+                                      widget.campsiteData["Address"]),
+                                  buildUnderlinedText(
+                                      'RM${widget.campsiteData["Fee"].toStringAsFixed(2)}',
+                                      addPerDay: true),
+                                  buildUnderlinedText(
+                                      widget.campsiteData["Description"]),
                                 ],
                               ),
                             ),
@@ -172,7 +176,7 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen>
                                   .doc();
                               await bookingRef.set({
                                 'Campsite Id': widget.id,
-                                'User Id': "82if9IwGprY5177fv80m",
+                                'User Id': userId,
                                 'Status': status,
                               });
 
@@ -190,7 +194,8 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen>
                             ),
                             child: Text(
                               'Book this campsite',
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
                           SizedBox(height: 16),
@@ -203,7 +208,8 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen>
                             ),
                             child: Text(
                               'Navigate to campsite',
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
                         ],
@@ -244,7 +250,7 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen>
         style: TextStyle(
           fontSize: 16,
           color:
-          tagColor == Colors.amber.shade300 ? Colors.black : Colors.white,
+              tagColor == Colors.amber.shade300 ? Colors.black : Colors.white,
         ),
       ),
       shape: RoundedRectangleBorder(

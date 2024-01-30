@@ -88,9 +88,14 @@ class _ComunityFollowingScreenState extends State<ComunityFollowingScreen> {
                     ratings: followingPosts[index].ratings,
                     imageTitle: followingPosts[index].imageTitle,
                     onLikePressed: (index) => _likePost(followingPosts[index]),
-                    onCommentPressed: (index) => _commentPost(context, index),
+                    onCommentPressed: (index) => _commentPost(
+                      context,
+                      index,
+                      followingPosts[index].documentId,
+                    ),
                     isFollowing: followingPosts[index].isFollowing,
                     onFollowPressed: () => _handleFollowPressed(index),
+                    id: followingPosts[index].documentId,
                   ),
                 );
               },
@@ -138,13 +143,13 @@ class _ComunityFollowingScreenState extends State<ComunityFollowingScreen> {
     }
   }
 
-  void _commentPost(BuildContext context, int index) {
+  void _commentPost(BuildContext context, int index, String postId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         TextEditingController _commentController = TextEditingController();
         return AlertDialog(
-          title: Text("Comment on Post $index"),
+          title: Text("Comment on Post "),
           content: TextField(
             controller: _commentController,
             decoration: InputDecoration(hintText: "Enter your comment here"),
@@ -158,13 +163,41 @@ class _ComunityFollowingScreenState extends State<ComunityFollowingScreen> {
             ),
             TextButton(
               child: Text('Comment'),
-              onPressed: () {
-                // Here, you can handle the submission of the comment
-                print("Comment: ${_commentController.text}"); // Example action
+              onPressed: () async {
+                // Check if the comment is not empty
+                if (_commentController.text.trim().isNotEmpty) {
+                  final comment =
+                      FirebaseFirestore.instance.collection('Comments').doc();
+
+                  // Create a map of comment data
+                  final json = {
+                    "comment": _commentController.text.trim(),
+                    "postId": postId,
+                    "userId": userId,
+                  };
+
+                  try {
+                    await comment.set(json);
+                    // Show a snackbar with a success message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Commented on Post')),
+                    );
+                  } catch (e) {
+                    // If there's an error, show a snackbar with the error message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error commenting: $e')),
+                    );
+                  }
+                } else {
+                  // If the comment is empty, show a snackbar with a message to enter a comment
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please enter a comment')),
+                  );
+                }
+
+                // Clear the text field and close the dialog
+                _commentController.clear();
                 Navigator.of(context).pop(); // Close the dialog
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Commented Post $index')),
-                );
               },
             ),
           ],

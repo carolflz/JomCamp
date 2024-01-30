@@ -1,4 +1,3 @@
-import 'package:application/Models/constant.dart';
 import 'package:application/Ressuable_widget/profile_menu.dart';
 import 'package:application/Ressuable_widget/section_heading.dart';
 import 'package:application/api/notification_controller.dart';
@@ -11,15 +10,16 @@ class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.userID});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState(id: userID);
 }
 
 class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
+  _ProfileScreenState({required this.id});
   final double coverHeight = 280;
   final double profileHeight = 144;
   double value = 3.5;
-
+  String id;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,10 +71,8 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget buildContent() => StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .snapshots(),
+      stream:
+          FirebaseFirestore.instance.collection('users').doc(id).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');

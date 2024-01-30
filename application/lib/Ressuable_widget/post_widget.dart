@@ -5,6 +5,7 @@ import 'package:application/Ressuable_widget/followbtn_widget.dart';
 class PostWidget extends StatelessWidget {
   final String userName;
   final String postDate;
+  final String id;
   final int postIndex;
   final Function(int) onLikePressed;
   final Function(int) onCommentPressed;
@@ -19,6 +20,7 @@ class PostWidget extends StatelessWidget {
   final String imageTitle;
 
   PostWidget({
+    required this.id,
     required this.userName,
     required this.postDate,
     required this.postIndex,
@@ -58,12 +60,12 @@ class PostWidget extends StatelessWidget {
           ListTile(
             contentPadding: EdgeInsets.all(0),
             leading: GestureDetector(
-              onTap: onUsernameTap,
-              child: CircleAvatar(
-                backgroundColor: Color.fromARGB(255, 30, 32, 30),
-                child: Icon(Icons.person, color: Colors.white),
-              ),
-            ),
+                onTap: onUsernameTap,
+                child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.grey.shade800,
+                    backgroundImage: NetworkImage(
+                        'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'))),
             title: Row(
               children: [
                 Expanded(
@@ -118,13 +120,6 @@ class PostWidget extends StatelessWidget {
                 ),
               ],
             ),
-            // subtitle: Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            // children: [
-            //   if (location != null) Text('Location: $location'),
-            //   Text(postDate),
-            // ],
-            // ),
           ),
           if (imagePath != null)
             ClipRRect(

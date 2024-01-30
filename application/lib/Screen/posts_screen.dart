@@ -1,6 +1,8 @@
+import 'package:application/Ressuable_widget/display.dart';
 import 'package:flutter/material.dart';
 import 'package:application/Models/post_Model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rich_readmore/rich_readmore.dart';
 
 class PostsScreen extends StatelessWidget {
   final int postIndex;
@@ -19,13 +21,41 @@ class PostsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Post',
-          style: TextStyle(
-            fontSize: 25.0,
-            letterSpacing: 2.0,
-            color: Colors.black,
-          ),
+        title: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Color.fromARGB(255, 30, 32, 30),
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(selectedPost.userName)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (!snapshot.hasData) {
+                      return const CircularProgressIndicator();
+                    }
+                    var output = snapshot.data!.data() as Map<String, dynamic>;
+
+                    String name = output["Name"] ?? "Unknown";
+                    return Text(
+                      name,
+                      style: TextStyle(
+                        decoration: TextDecoration.none,
+                        color: Color.fromARGB(255, 30, 32, 30),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 24,
+                      ),
+                    );
+                  }),
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -34,44 +64,6 @@ class PostsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Color.fromARGB(255, 30, 32, 30),
-                    child: Icon(Icons.person, color: Colors.white),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection("users")
-                            .doc(selectedPost.userName)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const CircularProgressIndicator();
-                          }
-                          if (!snapshot.hasData) {
-                            return const CircularProgressIndicator();
-                          }
-                          var output =
-                              snapshot.data!.data() as Map<String, dynamic>;
-
-                          String name = output["Name"] ?? "Unknown";
-                          return Text(
-                            name,
-                            style: TextStyle(
-                              decoration: TextDecoration.none,
-                              color: Color.fromARGB(255, 30, 32, 30),
-                              fontWeight: FontWeight.w400,
-                              fontSize: 24,
-                            ),
-                          );
-                        }),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
               Text(
                 selectedPost.imageTitle,
                 style: TextStyle(
@@ -106,14 +98,54 @@ class PostsScreen extends StatelessWidget {
                           snapshot.data!.data() as Map<String, dynamic>;
 
                       String description = output["description"] ?? "Unknown";
-                      return Text(
-                        description,
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                          decoration: TextDecoration.none,
-                          color: Color.fromARGB(255, 30, 32, 30),
-                          fontSize: 15,
-                        ),
+                      return Column(
+                        children: [
+                          StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection("users")
+                                  .doc(selectedPost.userName)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const CircularProgressIndicator();
+                                }
+                                if (!snapshot.hasData) {
+                                  return const CircularProgressIndicator();
+                                }
+                                var output = snapshot.data!.data()
+                                    as Map<String, dynamic>;
+
+                                String name = output["Name"] ?? "Unknown";
+                                TextSpan text = TextSpan(children: [
+                                  TextSpan(
+                                      text: "$name ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black)),
+                                  TextSpan(
+                                      text: description,
+                                      style: TextStyle(color: Colors.black)),
+                                ]);
+
+                                return RichReadMoreText(
+                                  text,
+                                  settings: LineModeSettings(
+                                    trimLines: 3,
+                                    trimCollapsedText: 'Show More',
+                                    trimExpandedText: ' Show Less ',
+                                    textAlign: TextAlign.justify,
+                                    onPressReadMore: () {
+                                      /// specific method to be called on press to show more
+                                    },
+                                    onPressReadLess: () {
+                                      /// specific method to be called on press to show less
+                                    },
+                                    lessStyle: TextStyle(color: Colors.blue),
+                                    moreStyle: TextStyle(color: Colors.blue),
+                                  ),
+                                );
+                              }),
+                        ],
                       );
                     }),
               ),
@@ -136,12 +168,13 @@ class PostsScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Text(
-                      'Comments  0',
+                      'Comments  ',
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
                 ],
               ),
+              DisplayWidget(selectedPost: selectedPost.documentId)
 
               // Add more details as needed
             ],
