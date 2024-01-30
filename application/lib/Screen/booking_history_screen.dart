@@ -26,35 +26,36 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     List<Map<String, dynamic>> tempPrevious = [];
 
     for (var doc in bookingQuery.docs) {
-      String userId = doc.data()['User Id']; // Get the User Id from Firestore
+      String userId = doc.data()['User Id']; 
 
       if (userId == Constants.userId) {
-        // Compare with the user id from constants.dart
-        DateTime bookingDate =
-            DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
-        String campsiteId = doc.data()['Campsite Id'];
+        if (doc.data().containsKey('Date') && doc.data().containsKey('Time')) {
+          DateTime bookingDate =
+              DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
+          String campsiteId = doc.data()['Campsite Id'];
 
-        DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
-            await FirebaseFirestore.instance
-                .collection('google_map_campsites')
-                .doc(campsiteId)
-                .get();
+          DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
+              await FirebaseFirestore.instance
+                  .collection('google_map_campsites')
+                  .doc(campsiteId)
+                  .get();
 
-        String campsiteName =
-            campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+          String campsiteName =
+              campsiteDoc.data()?['Name'] ?? 'No campsite name found';
 
-        Map<String, dynamic> booking = {
-          ...doc.data(),
-          'campsiteName': campsiteName,
-          'id': doc.id,
-        };
+          Map<String, dynamic> booking = {
+            ...doc.data(),
+            'campsiteName': campsiteName,
+            'id': doc.id,
+          };
 
-        if (doc.data().containsKey('Status') &&
-            doc.data()['Status'] == 'Paid') {
-          if (bookingDate.isAfter(DateTime.now())) {
-            tempUpcoming.add(booking);
-          } else {
-            tempPrevious.add(booking);
+          if (doc.data().containsKey('Status') &&
+              doc.data()['Status'] == 'Paid') {
+            if (bookingDate.isAfter(DateTime.now())) {
+              tempUpcoming.add(booking);
+            } else {
+              tempPrevious.add(booking);
+            }
           }
         }
       }
@@ -112,29 +113,32 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
       itemCount: bookings.length,
       itemBuilder: (context, index) {
         var booking = bookings[index];
-        return Card(
-          child: ListTile(
-            title: Text('${booking['campsiteName']}'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Date: ${booking['Date']}',
-                    style: TextStyle(fontSize: 16)),
-                Text('Time: ${booking['Time']}',
-                    style: TextStyle(fontSize: 16)),
-              ],
+        return Container(
+          height: 125, 
+          child: Card(
+            child: ListTile(
+              title: Text('${booking['campsiteName']}'),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Date: ${booking['Date']}',
+                      style: TextStyle(fontSize: 16)),
+                  Text('Time: ${booking['Time']}',
+                      style: TextStyle(fontSize: 16)),
+                ],
+              ),
+              trailing: isUpcoming
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () => removeBooking(booking),
+                        ),
+                      ],
+                    )
+                  : null,
             ),
-            trailing: isUpcoming
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () => removeBooking(booking),
-                      ),
-                    ],
-                  )
-                : null,
           ),
         );
       },

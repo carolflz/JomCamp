@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_null_comparison
-
 import 'package:application/Screen/payment_screen.dart';
 import 'package:application/Screen/rental_screen.dart';
 import 'package:flutter/material.dart';

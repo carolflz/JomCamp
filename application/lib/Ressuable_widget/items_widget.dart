@@ -59,7 +59,7 @@ class ItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String title = item['Name'];
-    String condition = item['Condition'];
+    String location = item['Location'];
     int price = (item['Rental Price'] as int);
     String imageUrl = item['Image'];
 
@@ -117,7 +117,7 @@ class ItemWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "$condition",
+                  "$location",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.black,

@@ -94,7 +94,6 @@ class _RentalScreenState extends State<RentalScreen> with SingleTickerProviderSt
                 Positioned(
                   right: 0,
                   child: Container(
-                    height: 600.0, // Set the desired height constraint here
                     padding: EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       color: Colors.black,
@@ -118,21 +117,26 @@ class _RentalScreenState extends State<RentalScreen> with SingleTickerProviderSt
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-            child: SizedBox(
-              height: 800,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  ItemsWidget(category: 'Tent', bookingId: widget.bookingId),
-                  ItemsWidget(category: 'Sleeping Bag', bookingId: widget.bookingId),
-                  ItemsWidget(category: 'Clothing', bookingId: widget.bookingId),
-                  ItemsWidget(category: 'Cooking Utensil', bookingId: widget.bookingId),
-                ],
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                pinned: false,
+                floating: false,
+                snap: false,
+                expandedHeight: 10, 
+                automaticallyImplyLeading: false, 
               ),
-            ),
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              ItemsWidget(category: 'Tent', bookingId: widget.bookingId),
+              ItemsWidget(category: 'Sleeping Bag', bookingId: widget.bookingId),
+              ItemsWidget(category: 'Clothing', bookingId: widget.bookingId),
+              ItemsWidget(category: 'Cooking Utensil', bookingId: widget.bookingId),
+            ],
           ),
         ),
       ),

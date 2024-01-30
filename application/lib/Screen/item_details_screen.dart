@@ -132,7 +132,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  "Brand          :     ${widget.item['Brand']}",
+                  "Brand           :     ${widget.item['Brand']}",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black,
@@ -310,10 +310,23 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
         });
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Equipment added to booking.'),
-        backgroundColor: Colors.green,
-      ));
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Equipment added to booking.'),
+      backgroundColor: Colors.green, 
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10), 
+      ),
+      behavior: SnackBarBehavior.floating,
+      action: SnackBarAction(
+        label: 'Close',
+        textColor: Colors.white, 
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    ),
+  );
 
     } catch (e) {
       print('Error updating booking: $e');
