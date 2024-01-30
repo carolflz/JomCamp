@@ -5,6 +5,7 @@ import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:web_admin/class/constant.dart';
+import 'package:web_admin/screen/sidebar_screen/booking_cancel.dart';
 import 'package:web_admin/screen/sidebar_screen/campsite_screen.dart';
 import 'package:web_admin/screen/sidebar_screen/rental_screen.dart';
 import 'package:web_admin/screen/sidebar_screen/reservation_screen.dart';
@@ -35,6 +36,11 @@ class _MainScreenState extends State<MainScreen> {
       case ReservationScreen.routeName:
         setState(() {
           _selectedItem = ReservationScreen();
+        });
+        break;
+      case CancelScreen.routeName:
+        setState(() {
+          _selectedItem = CancelScreen();
         });
         break;
     }
@@ -70,6 +76,10 @@ class _MainScreenState extends State<MainScreen> {
                 title: 'Campsite Booking',
                 icon: LineAwesomeIcons.alternate_map_marked,
                 route: ReservationScreen.routeName),
+            AdminMenuItem(
+                title: 'Booking Cancelation',
+                icon: Icons.cancel_outlined,
+                route: CancelScreen.routeName),
           ],
           selectedRoute: '',
           onSelected: (item) {

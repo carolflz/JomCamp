@@ -1,3 +1,4 @@
+import 'package:application/Models/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:application/Ressuable_widget/post_widget.dart';
 import 'package:application/Screen/posts_screen.dart';
@@ -169,7 +170,9 @@ class _ComunityLocalScreenState extends State<ComunityLocalScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ProfileScreen()),
+                            builder: (context) => ProfileScreen(
+                                  userID: userId,
+                                )),
                       );
                     },
                     userName: posts[index].userName,

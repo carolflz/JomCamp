@@ -1,3 +1,7 @@
+// ignore_for_file: unnecessary_null_comparison
+
+import 'package:application/Screen/payment_screen.dart';
+import 'package:application/Screen/rental_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:application/api/cart_provider.dart';
@@ -5,21 +9,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class BookingScreen extends StatefulWidget {
-  final String campsiteID;
+  final String bookingId;
 
-  BookingScreen(this.campsiteID);
+  BookingScreen(this.bookingId);
 
   @override
-  State<BookingScreen> createState() => _BookingScreenState(campsiteID);
+  State<BookingScreen> createState() => _BookingScreenState();
 }
 
 class _BookingScreenState extends State<BookingScreen> {
   late DateTime selectedDate;
   late TimeOfDay selectedTime;
   String campsiteName = '';
+  int campsitePrice = 0;
   String imageUrl = '';
   String id = '';
-  _BookingScreenState(this.id);
 
   @override
   void initState() {
@@ -31,30 +35,33 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Future<void> fetchCampsiteInfo() async {
     try {
-      // ignore: unnecessary_null_comparison
-      if (id != null) {
+      DocumentSnapshot<Map<String, dynamic>> bookingDoc =
+          await FirebaseFirestore.instance
+              .collection('Booking')
+              .doc(widget.bookingId)
+              .get();
+
+      String campsiteId = bookingDoc.data()?['Campsite Id'];
+
+      if (campsiteId != null) {
         DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
             await FirebaseFirestore.instance
                 .collection('google_map_campsites')
-                .doc(id)
+                .doc(campsiteId)
                 .get();
 
-        String campsiteName =
-            campsiteDoc.data()?['Name'] ?? 'No campsite name found';
-
         setState(() {
-          this.campsiteName = campsiteName;
-          this.imageUrl = campsiteDoc.data()?['image'] ?? '';
+          campsiteName =
+              campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+          campsitePrice = campsiteDoc.data()?['Fee'] ?? 0;
+          imageUrl = campsiteDoc.data()?['image'] ?? '';
         });
       }
     } catch (e) {
+      print('Error fetching campsite details: $e');
       setState(() {
         campsiteName = 'Error loading campsite name';
-        imageUrl = 'Error loading campsite image';
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-              'Failed to load campsite details. Please try again later.')));
     }
   }
 
@@ -74,6 +81,7 @@ class _BookingScreenState extends State<BookingScreen> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
+            cancelBooking();
             Navigator.pop(context);
           },
           icon: Icon(Icons.arrow_back),
@@ -108,6 +116,14 @@ class _BookingScreenState extends State<BookingScreen> {
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 20.0),
+            Text(
+              'RM${campsitePrice.toStringAsFixed(2)}',
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.black.withOpacity(0.5),
               ),
             ),
             SizedBox(height: 20.0),
@@ -167,9 +183,13 @@ class _BookingScreenState extends State<BookingScreen> {
               children: <Widget>[
                 ElevatedButton.icon(
                   onPressed: () {
-                    setState(() {
-                      Navigator.pushNamed(context, '/rental');
-                    });
+                    // Use widget.bookingId, which is the ID passed to this screen
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            RentalScreen(bookingId: widget.bookingId),
+                      ),
+                    );
                   },
                   icon: Icon(Icons.shopping_cart),
                   label: Text('ADD CAMPING EQUIPMENT ($cartCounter)'),
@@ -190,7 +210,13 @@ class _BookingScreenState extends State<BookingScreen> {
                     onPressed: () async {
                       await addBooking(
                           selectedDate, selectedTime.format(context));
-                      Navigator.pushNamed(context, '/payment');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PaymentScreen(bookingId: widget.bookingId),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -204,11 +230,14 @@ class _BookingScreenState extends State<BookingScreen> {
                   SizedBox(height: 18.0),
                   ElevatedButton(
                     child: Text("CANCEL"),
-                    onPressed: () {},
+                    onPressed: () {
+                      cancelBooking();
+                      Navigator.pop(context);
+                    },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.all(10.0),
-                      backgroundColor: Colors.yellow.shade900,
+                      backgroundColor: Color.fromARGB(255, 3, 61, 5),
                       fixedSize: Size(200, 50),
                       textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
                       shape: StadiumBorder(),
@@ -223,19 +252,33 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Future<void> addBooking(DateTime date, String time) async {
+  Future<void> addBooking(DateTime selectedDate, String selectedTime) async {
     try {
-      final booking = FirebaseFirestore.instance.collection('Booking').doc();
-      final json = {
-        'Campsite Id': id,
-        'Date': DateFormat('dd/MM/yyyy').format(date),
-        'Time': time,
-        'User Id': "EvNNmetNv2NRYlmK6Qy6",
-      };
-      await booking.set(json);
-      print('Success adding booking');
-    } catch (error) {
-      print('Error add booking: $error');
+      DocumentReference bookingRef = FirebaseFirestore.instance
+          .collection('Booking')
+          .doc(widget.bookingId);
+
+      await bookingRef.update({
+        'Date': DateFormat('dd/MM/yyyy').format(selectedDate),
+        'Time': selectedTime,
+      });
+    } catch (e) {
+      print(
+          'An error occurred while adding the date and time to the booking: $e');
+    }
+  }
+
+  Future<void> cancelBooking() async {
+    try {
+      DocumentReference bookingRef = FirebaseFirestore.instance
+          .collection('Booking')
+          .doc(widget.bookingId);
+
+      await bookingRef.delete();
+
+      Navigator.pop(context);
+    } catch (e) {
+      print('An error occurred while canceling the booking: $e');
     }
   }
 }

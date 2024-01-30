@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:application/api/cart_provider.dart';
 
 class CartScreen extends StatefulWidget {
+  final String bookingId;
+
+  CartScreen({required this.bookingId});
   @override
   _CartScreenState createState() => _CartScreenState();
 }
@@ -18,11 +21,11 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void fetchEquipment() async {
-    var userQuery =
-        await FirebaseFirestore.instance.collection('Booking').get();
-    var userData = userQuery.docs.first.data();
+    DocumentSnapshot<Map<String, dynamic>> bookingDoc =
+        await FirebaseFirestore.instance.collection('Booking').doc(widget.bookingId).get();
+    var bookingData = bookingDoc.data();
     setState(() {
-      equipmentList = userData['equipments'] ?? [];
+      equipmentList = bookingData?['equipments'] ?? [];
     });
   }
 
@@ -42,19 +45,26 @@ class _CartScreenState extends State<CartScreen> {
             Navigator.pop(context);
           },
           icon: Icon(Icons.arrow_back),
-          color: Colors.yellow.shade900,
+          color: Color.fromARGB(255, 3, 61, 5),
         ),
       ),
       body: equipmentList.isEmpty
           ? Center(
               child: Text('No items in the cart',
                   style: TextStyle(color: Colors.black)))
-          : ListView.builder(
-              itemCount: equipmentList.length,
-              itemBuilder: (context, index) {
-                var item = equipmentList[index];
-                return buildCartItem(item, cartProvider);
-              },
+          : Container(
+              height: 800.0, // Set the desired height constraint here
+              child: SingleChildScrollView(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: equipmentList.length,
+                  itemBuilder: (context, index) {
+                    var item = equipmentList[index];
+                    return buildCartItem(item, cartProvider);
+                  },
+                ),
+              ),
             ),
     );
   }
@@ -73,7 +83,7 @@ class _CartScreenState extends State<CartScreen> {
             onPressed: () {
               updateQuantity(item, cartProvider, -1);
             },
-            color: Colors.yellow.shade900,
+            color: Color.fromARGB(255, 3, 61, 5),
           ),
           Text('${item['quantity']}',
               style: TextStyle(fontSize: 18, color: Colors.black)),
@@ -82,14 +92,14 @@ class _CartScreenState extends State<CartScreen> {
             onPressed: () {
               updateQuantity(item, cartProvider, 1);
             },
-            color: Colors.yellow.shade900,
+            color: Color.fromARGB(255, 3, 61, 5),
           ),
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
               removeItemFromCart(item, cartProvider);
             },
-            color: Colors.yellow.shade900,
+            color: Color.fromARGB(255, 3, 61, 5),
           ),
         ],
       ),

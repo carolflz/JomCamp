@@ -49,7 +49,7 @@ class LevelText extends State<LevelState> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(5.0, 6.0, 9.0, 0),
+      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 9.0, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -72,8 +72,8 @@ class LevelText extends State<LevelState> {
                     itemCount: _levelLabels.length,
                     itemBuilder: (context, index) {
                       final level = _levelLabels[index];
-                      final color =
-                          levelColors[level] ?? Colors.grey; // Default color if not found
+                      final color = levelColors[level] ??
+                          Colors.grey; // Default color if not found
 
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(5.0, 1.0, 10.0, 0),
@@ -111,7 +111,6 @@ class LevelText extends State<LevelState> {
           ),
           dataFetched == null
               ? Container()
-              
               : ListView.builder(
                   shrinkWrap: true,
                   physics: ClampingScrollPhysics(),
@@ -121,7 +120,19 @@ class LevelText extends State<LevelState> {
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: ListTile(
                         title: Text(dataFetched[index]["Name"]),
-                        leading: Image.network(dataFetched[index]["image"]),
+                        leading: SizedBox(
+                          width: 100.0, // Set your desired width
+                          height: 56.0, // Set your desired height
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Adjust the corner radius if needed
+                            child: Image.network(
+                              dataFetched[index]["image"],
+                              fit: BoxFit
+                                  .cover, // This ensures the image covers the box area
+                            ),
+                          ),
+                        ),
                         trailing: ElevatedButton(
                           onPressed: () {
                             Navigator.push(

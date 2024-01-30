@@ -1,13 +1,16 @@
-import 'package:application/Screen/cart_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:application/Screen/cart_screen.dart';
 import 'package:application/ressuable_widget/items_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:application/api/cart_provider.dart';
 
-
 class RentalScreen extends StatefulWidget {
+  final String bookingId;
+
+  RentalScreen({required this.bookingId});
+
   @override
-  State<RentalScreen> createState() => _RentalScreenState();
+  _RentalScreenState createState() => _RentalScreenState();
 }
 
 class _RentalScreenState extends State<RentalScreen> with SingleTickerProviderStateMixin {
@@ -20,10 +23,9 @@ class _RentalScreenState extends State<RentalScreen> with SingleTickerProviderSt
     super.initState();
   }
 
-  _handleTabSelection(){
-    if(_tabController.indexIsChanging){
-        setState(() {    
-      });
+  _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
     }
   }
 
@@ -82,7 +84,7 @@ class _RentalScreenState extends State<RentalScreen> with SingleTickerProviderSt
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CartScreen(),
+                        builder: (context) => CartScreen(bookingId: widget.bookingId),
                       ),
                     );
                   },
@@ -92,6 +94,7 @@ class _RentalScreenState extends State<RentalScreen> with SingleTickerProviderSt
                 Positioned(
                   right: 0,
                   child: Container(
+                    height: 600.0, // Set the desired height constraint here
                     padding: EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       color: Colors.black,
@@ -115,27 +118,25 @@ class _RentalScreenState extends State<RentalScreen> with SingleTickerProviderSt
             ),
           ],
         ),
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    ItemsWidget(category: 'Tent'),
-                    ItemsWidget(category: 'Sleeping Bag'),
-                    ItemsWidget(category: 'Clothing'),
-                    ItemsWidget(category: 'Cooking Utensil'),
-                  ],
-                ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+            child: SizedBox(
+              height: 800,
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  ItemsWidget(category: 'Tent', bookingId: widget.bookingId),
+                  ItemsWidget(category: 'Sleeping Bag', bookingId: widget.bookingId),
+                  ItemsWidget(category: 'Clothing', bookingId: widget.bookingId),
+                  ItemsWidget(category: 'Cooking Utensil', bookingId: widget.bookingId),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-        ),
-      );
+      ),
+    );
   }
 }
+

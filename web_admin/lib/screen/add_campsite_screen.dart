@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, no_leading_underscores_for_local_identifiers, unused_local_variable, non_constant_identifier_names, use_build_context_synchronously
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -20,7 +21,7 @@ class AddCampsiteScreen extends StatelessWidget {
     final category_item = [
       'Riverside',
       'Forested',
-      'Family-Friendly',
+      'Family-friendly',
       'Sunset-view',
       'Mountainous',
     ];
@@ -145,8 +146,27 @@ class AddCampsiteScreen extends StatelessWidget {
                     'Address': address.text,
                     'Level': _selectedLevel,
                     'Category': _selectedCategory,
+                    'image':
+                        "https://images.says.com/uploads/story_source/source_image/986979/8488.jpg",
+                    'Description':
+                        "offers a peaceful retreat into nature. The campsite, surrounded by majestic pine trees, provides a perfect blend of tranquility and adventure. It's an ideal spot for families, nature enthusiasts, and anyone looking to escape the hustle and bustle of city life.",
                   };
                   await campsite.set(json);
+
+                  final snackBar = SnackBar(
+                    elevation: 0,
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Colors.transparent,
+                    content: AwesomeSnackbarContent(
+                      title: 'Sucess',
+                      message: 'The Campsite has been Added to the System',
+                      contentType: ContentType.success,
+                    ),
+                  );
+
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(snackBar);
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -155,7 +175,7 @@ class AddCampsiteScreen extends StatelessWidget {
                     shape: const StadiumBorder()),
                 child: Center(
                   child: const Text(
-                    'Edit',
+                    'ADD',
                     style: TextStyle(color: Colors.black),
                   ),
                 ),

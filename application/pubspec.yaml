@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
     
+
+
   geolocator: ^10.1.0
   # Google map
   google_maps_flutter: ^2.0.10

@@ -2,15 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:application/screen/item_details_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ItemsWidget extends StatelessWidget {
+class ItemsWidget extends StatefulWidget {
   final String category;
+  final String bookingId;
 
-  ItemsWidget({required this.category});
+  ItemsWidget({required this.category, required this.bookingId});
 
+  @override
+  _ItemsWidgetState createState() => _ItemsWidgetState();
+}
+
+class _ItemsWidgetState extends State<ItemsWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('equipments').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('equipments')
+          .where('Type', isEqualTo: widget.category)
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -27,11 +36,13 @@ class ItemsWidget extends StatelessWidget {
           crossAxisCount: 2,
           shrinkWrap: true,
           childAspectRatio: (160 / 210),
-          children: [
-            for (var item in items)
-              if (item['Type'] == category)
-                ItemWidget(item: item, category: category),
-          ],
+          children: items.map((item) {
+            return ItemWidget(
+              item: item,
+              category: widget.category,
+              bookingId: widget.bookingId,
+            );
+          }).toList(),
         );
       },
     );
@@ -41,8 +52,9 @@ class ItemsWidget extends StatelessWidget {
 class ItemWidget extends StatelessWidget {
   final DocumentSnapshot<Object?> item;
   final String category;
+  final String bookingId;
 
-  ItemWidget({required this.item, required this.category});
+  ItemWidget({required this.item, required this.category, required this.bookingId});
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +86,7 @@ class ItemWidget extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => ItemDetailsScreen(
                     item: item,
+                    bookingId: bookingId,
                   ),
                 ),
               );

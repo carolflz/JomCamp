@@ -1,3 +1,4 @@
+import 'package:application/Models/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:application/Models/post_Model.dart';
@@ -73,7 +74,9 @@ class _ComunityFollowingScreenState extends State<ComunityFollowingScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ProfileScreen()),
+                            builder: (context) => ProfileScreen(
+                                  userID: userId,
+                                )),
                       );
                     },
                     userName: followingPosts[index].userName,

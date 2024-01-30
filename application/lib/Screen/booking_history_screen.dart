@@ -17,44 +17,46 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     fetchBookings();
   }
 
-  void fetchBookings() async {
-    QuerySnapshot<Map<String, dynamic>> bookingQuery =
-        await FirebaseFirestore.instance.collection('Booking').get();
+void fetchBookings() async {
+  QuerySnapshot<Map<String, dynamic>> bookingQuery =
+      await FirebaseFirestore.instance.collection('Booking').get();
 
-    List<Map<String, dynamic>> tempUpcoming = [];
-    List<Map<String, dynamic>> tempPrevious = [];
+  List<Map<String, dynamic>> tempUpcoming = [];
+  List<Map<String, dynamic>> tempPrevious = [];
 
-    for (var doc in bookingQuery.docs) {
-      DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
-      String campsiteId = doc.data()['Campsite Id'];
+  for (var doc in bookingQuery.docs) {
+    DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
+    String campsiteId = doc.data()['Campsite Id'];
 
-      DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
-          await FirebaseFirestore.instance
-              .collection('google_map_campsites')
-              .doc(campsiteId)
-              .get();
+    DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
+        await FirebaseFirestore.instance
+            .collection('google_map_campsites')
+            .doc(campsiteId)
+            .get();
 
-      String campsiteName =
-          campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+    String campsiteName =
+        campsiteDoc.data()?['Name'] ?? 'No campsite name found';
 
-      Map<String, dynamic> booking = {
-        ...doc.data(),
-        'campsiteName': campsiteName,
-        'id': doc.id, // Include the document ID
-      };
+    Map<String, dynamic> booking = {
+      ...doc.data(),
+      'campsiteName': campsiteName,
+      'id': doc.id, 
+    };
 
+    if (doc.data().containsKey('Status') && doc.data()['Status'] == 'Paid') {
       if (bookingDate.isAfter(DateTime.now())) {
         tempUpcoming.add(booking);
       } else {
         tempPrevious.add(booking);
       }
     }
-
-    setState(() {
-      upcomingBookings = tempUpcoming;
-      previousBookings = tempPrevious;
-    });
   }
+
+  setState(() {
+    upcomingBookings = tempUpcoming;
+    previousBookings = tempPrevious;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -170,18 +172,48 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     bool confirmDelete = await showDeleteConfirmationDialog(context);
 
     if (confirmDelete) {
-      await FirebaseFirestore.instance
-          .collection('Booking')
-          .doc(booking['id'])
-          .delete();
+      final campsite = FirebaseFirestore.instance.collection('Booking').doc();
+      final json = {'Booking Id': booking['id']};
+      await campsite.set(json);
 
-      setState(() {
-        if (upcomingBookings.contains(booking)) {
-          upcomingBookings.remove(booking);
-        } else if (previousBookings.contains(booking)) {
-          previousBookings.remove(booking);
-        }
-      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Container(
+        padding: const EdgeInsets.all(8),
+        height: 85,
+        decoration: const BoxDecoration(
+            color: Colors.green,
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: Row(children: [
+          Icon(
+            Icons.check_circle,
+            color: Colors.white,
+            size: 40,
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Expanded(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Request Send",
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              Text(
+                "Your Cancelation Request has been send. Waiting for approval.",
+                style: TextStyle(color: Colors.white, fontSize: 15),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              )
+            ],
+          ))
+        ]),
+      )));
     }
   }
 
@@ -198,9 +230,10 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                   onPressed: () => Navigator.of(context).pop(false),
                 ),
                 ElevatedButton(
-                  child: Text("Delete"),
-                  onPressed: () => Navigator.of(context).pop(true),
-                ),
+                    child: Text("Delete"),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    }),
               ],
             );
           },
