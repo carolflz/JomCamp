@@ -7,8 +7,10 @@ import 'package:application/Screen/cart_screen.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
   final DocumentSnapshot<Object?> item;
+  final String bookingId;
 
-  ItemDetailsScreen({required this.item});
+
+  ItemDetailsScreen({required this.item, required this.bookingId});
 
   @override
   _ItemDetailsScreenState createState() => _ItemDetailsScreenState();
@@ -49,7 +51,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CartScreen(),
+                      builder: (context) => CartScreen(bookingId: widget.bookingId),
                     ),
                   );
                 },
@@ -181,7 +183,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                               child: Icon(
                                 CupertinoIcons.minus,
                                 size: 18,
-                                color: Colors.yellow.shade900,
+                                color: Color.fromARGB(255, 3, 61, 5),
                               ),
                             ),
                             SizedBox(width: 15),
@@ -203,7 +205,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                               child: Icon(
                                 CupertinoIcons.plus,
                                 size: 18,
-                                color: Colors.yellow.shade900,
+                                color: Color.fromARGB(255, 3, 61, 5),
                               ),
                             ),
                           ],
@@ -228,100 +230,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       ElevatedButton(
                         child: Text("ADD TO CART"),
                         onPressed: () async {
-                          try {
-                            QuerySnapshot<Map<String, dynamic>> userQuery =
-                                await FirebaseFirestore.instance
-                                    .collection('Booking')
-                                    .get();
-
-                            if (userQuery.docs.isNotEmpty) {
-                              DocumentSnapshot<Map<String, dynamic>> userDoc =
-                                  userQuery.docs.first;
-
-                              if (userDoc.exists) {
-                                await FirebaseFirestore.instance
-                                    .runTransaction((transaction) async {
-                                  DocumentSnapshot<Map<String, dynamic>>
-                                      freshUserDoc =
-                                      await transaction.get(userDoc.reference);
-
-                                  cartProvider.addToCart(quantity);
-
-                                  if (freshUserDoc
-                                      .data()!
-                                      .containsKey('equipments')) {
-                                    List<Map<String, dynamic>>
-                                        currentEquipmentList =
-                                        List.from(freshUserDoc['equipments']);
-
-                                    int index = currentEquipmentList.indexWhere(
-                                        (equipment) =>
-                                            equipment['id'] == widget.item.id);
-
-                                    if (index != -1) {
-                                      currentEquipmentList[index]['quantity'] +=
-                                          quantity;
-                                      currentEquipmentList[index]
-                                              ['equipmentFee'] =
-                                          (widget.item['Rental Price'] as int) *
-                                              currentEquipmentList[index]
-                                                  ['quantity'];
-                                    } else {
-                                      currentEquipmentList.add({
-                                        'id': widget.item.id,
-                                        'name': widget.item['Name'],
-                                        'price': widget.item['Rental Price'],
-                                        'quantity': quantity,
-                                        'equipmentFee': (widget
-                                                .item['Rental Price'] as int) *
-                                            quantity,
-                                      });
-                                    }
-
-                                    int newTotalEquipmentFee =
-                                        currentEquipmentList
-                                            .map<int>(
-                                                (equipment) =>
-                                                    equipment['equipmentFee']
-                                                        as int)
-                                            .fold(
-                                                0,
-                                                (prev, current) =>
-                                                    prev + current);
-
-                                    transaction.update(userDoc.reference, {
-                                      'equipments': currentEquipmentList,
-                                      'totalEquipmentFee': newTotalEquipmentFee,
-                                    });
-                                  } else {
-                                    transaction.update(userDoc.reference, {
-                                      'equipments': [
-                                        {
-                                          'id': widget.item.id,
-                                          'name': widget.item['Name'],
-                                          'price': widget.item['Rental Price'],
-                                          'quantity': quantity,
-                                          'equipmentFee':
-                                              (widget.item['Rental Price']
-                                                      as int) *
-                                                  quantity,
-                                        },
-                                      ],
-                                      'totalEquipmentFee':
-                                          (widget.item['Rental Price'] as int) *
-                                              quantity,
-                                    });
-                                  }
-                                });
-                              } else {
-                                print('No user document found.');
-                              }
-                            } else {
-                              print('No user documents found.');
-                            }
-                          } catch (error) {
-                            print('Error adding to cart: $error');
-                          }
+                          await addToBooking();
+                          Provider.of<CartProvider>(context, listen: false).addToCart(quantity);
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
@@ -342,7 +252,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.all(10.0),
-                          backgroundColor: Colors.yellow.shade900,
+                          backgroundColor: Color.fromARGB(255, 3, 61, 5),
                           fixedSize: Size(200, 50),
                           textStyle:
                               TextStyle(fontSize: 18, letterSpacing: 5.0),
@@ -358,5 +268,59 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
         ),
       ),
     );
+  }
+
+    Future<void> addToBooking() async {
+    try {
+      // Reference to the specific booking document
+      DocumentReference bookingRef = FirebaseFirestore.instance.collection('Booking').doc(widget.bookingId);
+
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        // Get the current booking document
+        DocumentSnapshot bookingSnapshot = await transaction.get(bookingRef);
+
+        // Get the current equipment list from the booking, if it exists
+        List<dynamic> currentEquipment = (bookingSnapshot.data() as Map<String, dynamic>)['equipments'] ?? [];
+
+        // Check if the item already exists in the list
+        int existingIndex = currentEquipment.indexWhere((equip) => equip['id'] == widget.item.id);
+        if (existingIndex != -1) {
+          // Update quantity and equipment fee if it already exists
+          currentEquipment[existingIndex]['quantity'] += quantity;
+          currentEquipment[existingIndex]['equipmentFee'] += quantity * widget.item['Rental Price'];
+        } else {
+          // Add the new equipment to the list if it doesn't exist
+          currentEquipment.add({
+            'id': widget.item.id,
+            'name': widget.item['Name'],
+            'price': widget.item['Rental Price'],
+            'quantity': quantity,
+            'equipmentFee': quantity * widget.item['Rental Price'],
+          });
+        }
+
+        int newTotalEquipmentFee = currentEquipment.fold<int>(0, (int previousValue, dynamic element) {
+          return previousValue + (element['equipmentFee'] as int);
+        });
+
+        // Update the booking document with the new equipment list and total fee
+        transaction.update(bookingRef, {
+          'equipments': currentEquipment,
+          'totalEquipmentFee': newTotalEquipmentFee,
+        });
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Equipment added to booking.'),
+        backgroundColor: Colors.green,
+      ));
+
+    } catch (e) {
+      print('Error updating booking: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to add equipment to booking.'),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }

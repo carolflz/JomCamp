@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_null_comparison
-
 import 'package:application/Screen/booking_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,6 +16,7 @@ class CampsiteDetailsScreen extends StatefulWidget {
 class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
   ScrollController _scrollController = ScrollController();
   bool isNameWhite = true;
+  String status = 'Unpaid';
 
   @override
   void initState() {
@@ -119,6 +118,8 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
                           SizedBox(height: 24),
                         ],
                       ),
+                      buildUnderlinedText('Campsite Fee', 'RM${widget.campsiteData["Fee"].toStringAsFixed(2)}'),
+                      SizedBox(height: 22),
                       buildUnderlinedText('Address', widget.campsiteData["Address"]),
                       SizedBox(height: 22),
                       buildUnderlinedText(
@@ -126,17 +127,24 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
                       SizedBox(height: 36),
                       Center(
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                           DocumentReference bookingRef = FirebaseFirestore.instance.collection('Booking').doc();
+                            await bookingRef.set({
+                              'Campsite Id': widget.id,
+                              'User Id': "82if9IwGprY5177fv80m",
+                              'Status': status,
+                            });
+
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => BookingScreen(widget.id),
+                                builder: (context) => BookingScreen(bookingRef.id),
                               ),
                             );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Color.fromARGB(255, 3, 61, 5), // Dark Green
-                            minimumSize: Size(200, 50), // Adjust button size
+                                Color.fromARGB(255, 3, 61, 5), 
+                            minimumSize: Size(200, 50),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),

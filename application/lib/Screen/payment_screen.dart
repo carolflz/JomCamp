@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:application/Screen/booking_history_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_paypal_checkout/flutter_paypal_checkout.dart';
 
 class PaymentScreen extends StatefulWidget {
+  final String bookingId;
+
+  PaymentScreen({required this.bookingId});
+
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
@@ -25,13 +30,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> fetchBookingDetails() async {
     try {
-      var bookingQuery =
-          await FirebaseFirestore.instance.collection('Booking').get();
-      if (bookingQuery.docs.isNotEmpty) {
-        var bookingData = bookingQuery.docs.first.data();
+      DocumentSnapshot<Map<String, dynamic>> bookingDoc =
+          await FirebaseFirestore.instance
+              .collection('Booking')
+              .doc(widget.bookingId)
+              .get();
+
+      var bookingData = bookingDoc.data();
+      if (bookingData != null) {
         var campsiteId = bookingData['Campsite Id'];
 
-        // Save date and time from booking
         bookingDate = bookingData['Date'] ?? '';
         bookingTime = bookingData['Time'] ?? '';
 
@@ -47,9 +55,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
             equipmentList = List<Map<String, dynamic>>.from(
                 bookingData['equipments'] ?? []);
             equipmentFee = bookingData['totalEquipmentFee'] ?? 0;
+
+            if (equipmentList.isEmpty) {
+              deliveryFee = 0;
+            } else {
+              deliveryFee = 5;
+            }
+
             totalFee = equipmentFee + deliveryFee + campsiteFee;
           });
         }
+      } else {
+        setState(() {
+          campsiteName = 'Error: Booking data not found';
+        });
       }
     } catch (e) {
       setState(() {
@@ -74,20 +93,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget buildCartItems() {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: equipmentList.length,
-      itemBuilder: (context, index) {
-        var item = equipmentList[index];
-        return ListTile(
-          title: Text('${item['name']} x ${item['quantity']}',
-              style: TextStyle(color: Colors.black)),
-          subtitle: Text('Price: RM ${item['equipmentFee']}',
-              style: TextStyle(color: Colors.black.withOpacity(0.5))),
-        );
-      },
-    );
+    if (equipmentList.isEmpty) {
+      return Text('The cart is empty', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.5)));
+    } else {
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: equipmentList.length,
+        itemBuilder: (context, index) {
+          var item = equipmentList[index];
+          return ListTile(
+            title: Text('${item['name']} x ${item['quantity']}',
+                style: TextStyle(color: Colors.black)),
+            subtitle: Text('Price: RM ${item['equipmentFee']}',
+                style: TextStyle(color: Colors.black.withOpacity(0.5))),
+          );
+        },
+      );
+    }
   }
 
   Widget buildPaymentDetails() {
@@ -96,7 +119,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         SizedBox(height: 20),
-        Text('Campsite Fee     : RM $campsiteFee',
+        Text('Campsite Fee     : RM $campsiteFee.00',
             style: TextStyle(fontSize: 16, color: Colors.black)),
         Text('Equipment Fee   : RM $equipmentFee.00',
             style: TextStyle(fontSize: 16, color: Colors.black)),
@@ -128,41 +151,48 @@ class _PaymentScreenState extends State<PaymentScreen> {
           color: Colors.white,
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('Booking Details:',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            SizedBox(height: 8),
-            buildBookingInfo(),
-            SizedBox(height: 12),
-            Text('Cart Items:',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            SizedBox(height: 8),
-            buildCartItems(),
-            SizedBox(height: 12),
-            Text('Payment Fees:',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            SizedBox(height: 8),
-            buildPaymentDetails(),
-            SizedBox(height: 20),
+      body: Container(
+        height: 800.0, // Set the desired height constraint here
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('Booking Details:',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
+                SizedBox(height: 8),
+                buildBookingInfo(),
+                SizedBox(height: 12),
+                Text('Cart Items:',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
+                SizedBox(height: 8),
+                buildCartItems(),
+                SizedBox(height: 12),
+                Text('Payment Fees:',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
+                SizedBox(height: 8),
+                buildPaymentDetails(),
+                SizedBox(height: 20),
             Center(
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await FirebaseFirestore.instance
+                      .collection('Booking')
+                      .doc(widget.bookingId)
+                      .update({'Status': 'Paid'});
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => PaypalCheckout(
                           sandboxMode: true,
@@ -175,26 +205,45 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           transactions: [
                             {
                               "amount": {
-                                "total": "$totalFee",
+                                "total": totalFee.toStringAsFixed(2),
                                 "currency": "MYR",
-                                "details": {
-                                  "campsite fee": '$campsiteFee',
-                                  "equipment fee": "$equipmentFee",
-                                  "delivery fee": "$deliveryFee",
-                                }
+                                // "details": {
+                                //   "campsite fee": campsiteFee.toStringAsFixed(2),
+                                //   "equipment fee": equipmentFee.toStringAsFixed(2),
+                                //   "delivery fee": deliveryFee.toStringAsFixed(2),
+                                // }
                               },
                             }
-                          ],
+                          ],                          
                           note: "Contact us for any questions on your order.",
                           onSuccess: (Map params) async {
                             print("onSuccess: $params");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BookingHistoryScreen(),
+                                ),
+                              );
                           },
                           onError: (error) {
                             print("onError: $error");
-                            Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BookingHistoryScreen(),
+                                ),
+                              );
+                            // Navigator.pop(context);
                           },
                           onCancel: () {
                             print('cancelled:');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BookingHistoryScreen(),
+                                ),
+                              );
+                            // Navigator.pop(context);
                           },
                         ),
                       ));
@@ -218,16 +267,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.all(10.0),
-                      backgroundColor: Colors.yellow.shade900,
+                      backgroundColor: Color.fromARGB(255, 3, 61, 5),
                       fixedSize: Size(200, 50),
                       textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
                       shape: StadiumBorder(),
                     ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

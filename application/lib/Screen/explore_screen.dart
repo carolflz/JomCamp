@@ -41,12 +41,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
           SizedBox(
             height: 10,
           ),
-          MyMap(),
+          CategoryText(),
+          LevelState(),
           SizedBox(
             height: 20,
           ),
-          CategoryText(),
-          LevelState(),
+          MyMap(),
         ],
       ),
     );

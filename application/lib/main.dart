@@ -94,15 +94,15 @@ class _MyAppState extends State<MyApp> {
               return ErrorScreen();
             });
 
-          case '/rental':
-            return MaterialPageRoute(builder: (context) {
-              return RentalScreen();
-            });
+          // case '/rental':
+          //   return MaterialPageRoute(builder: (context) {
+          //     return RentalScreen();
+          //   });
 
-          case '/payment':
-            return MaterialPageRoute(builder: (context) {
-              return PaymentScreen();
-            });
+          // case '/payment':
+          //   return MaterialPageRoute(builder: (context) {
+          //     return PaymentScreen();
+          //   });
 
           default:
             assert(false, 'Page ${settings.name} not found');

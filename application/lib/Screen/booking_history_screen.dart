@@ -17,44 +17,46 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     fetchBookings();
   }
 
-  void fetchBookings() async {
-    QuerySnapshot<Map<String, dynamic>> bookingQuery =
-        await FirebaseFirestore.instance.collection('Booking').get();
+void fetchBookings() async {
+  QuerySnapshot<Map<String, dynamic>> bookingQuery =
+      await FirebaseFirestore.instance.collection('Booking').get();
 
-    List<Map<String, dynamic>> tempUpcoming = [];
-    List<Map<String, dynamic>> tempPrevious = [];
+  List<Map<String, dynamic>> tempUpcoming = [];
+  List<Map<String, dynamic>> tempPrevious = [];
 
-    for (var doc in bookingQuery.docs) {
-      DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
-      String campsiteId = doc.data()['Campsite Id'];
+  for (var doc in bookingQuery.docs) {
+    DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
+    String campsiteId = doc.data()['Campsite Id'];
 
-      DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
-          await FirebaseFirestore.instance
-              .collection('google_map_campsites')
-              .doc(campsiteId)
-              .get();
+    DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
+        await FirebaseFirestore.instance
+            .collection('google_map_campsites')
+            .doc(campsiteId)
+            .get();
 
-      String campsiteName =
-          campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+    String campsiteName =
+        campsiteDoc.data()?['Name'] ?? 'No campsite name found';
 
-      Map<String, dynamic> booking = {
-        ...doc.data(),
-        'campsiteName': campsiteName,
-        'id': doc.id, // Include the document ID
-      };
+    Map<String, dynamic> booking = {
+      ...doc.data(),
+      'campsiteName': campsiteName,
+      'id': doc.id, 
+    };
 
+    if (doc.data().containsKey('Status') && doc.data()['Status'] == 'Paid') {
       if (bookingDate.isAfter(DateTime.now())) {
         tempUpcoming.add(booking);
       } else {
         tempPrevious.add(booking);
       }
     }
-
-    setState(() {
-      upcomingBookings = tempUpcoming;
-      previousBookings = tempPrevious;
-    });
   }
+
+  setState(() {
+    upcomingBookings = tempUpcoming;
+    previousBookings = tempPrevious;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
