@@ -601,14 +601,13 @@ Marker createMarker({
   );
 }
 
+//Google map marker 
 Future<void> launchMaps(double lat, double lng) async {
   final String googleMapsUrl =
       'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
 
   await launchUrl(Uri.parse(googleMapsUrl));
 }
-
-
 
   @override
   Widget build(BuildContext context) {

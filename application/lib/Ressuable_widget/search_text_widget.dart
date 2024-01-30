@@ -13,6 +13,7 @@ class _SearchTextState extends State<SearchText> {
   
   List<Map<String, dynamic>> campsiteList = [];
   List<String> id = [];
+  // reads data from firestore
   Future<List<Map<String, dynamic>>> getData() async {
     FirebaseFirestore db = FirebaseFirestore.instance;
     return await db.collection("google_map_campsites").get().then(
