@@ -1,3 +1,4 @@
+import 'package:application/Models/constant.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -59,7 +60,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
           'imageCaption': _captionController.text,
           'imageTitle': _titleController.text,
           'imagePath': imageUrl,
-          'userId': 'EvNNmetNv2NRYlmK6Qy6', // Replace with the actual user ID
+          'userId': userId,
           'postDate': timestamp,
           'isFollowing': false,
           'isLikedByUser': false,

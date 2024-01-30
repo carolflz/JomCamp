@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:application/Models/constant.dart' as Constants;
 
 class BookingHistoryScreen extends StatefulWidget {
   @override
@@ -17,46 +18,55 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     fetchBookings();
   }
 
-void fetchBookings() async {
-  QuerySnapshot<Map<String, dynamic>> bookingQuery =
-      await FirebaseFirestore.instance.collection('Booking').get();
+  void fetchBookings() async {
+    QuerySnapshot<Map<String, dynamic>> bookingQuery =
+        await FirebaseFirestore.instance.collection('Booking').get();
 
-  List<Map<String, dynamic>> tempUpcoming = [];
-  List<Map<String, dynamic>> tempPrevious = [];
+    List<Map<String, dynamic>> tempUpcoming = [];
+    List<Map<String, dynamic>> tempPrevious = [];
 
-  for (var doc in bookingQuery.docs) {
-    DateTime bookingDate = DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
-    String campsiteId = doc.data()['Campsite Id'];
+    for (var doc in bookingQuery.docs) {
+      String userId = doc.data()['User Id']; // Get the User Id from Firestore
 
-    DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
-        await FirebaseFirestore.instance
-            .collection('google_map_campsites')
-            .doc(campsiteId)
-            .get();
+      if (userId == Constants.userId) {
+        // Compare with the user id from constants.dart
+        DateTime bookingDate =
+            DateFormat('dd/MM/yyyy').parse(doc.data()['Date']);
+        String campsiteId = doc.data()['Campsite Id'];
 
-    String campsiteName =
-        campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+        DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
+            await FirebaseFirestore.instance
+                .collection('google_map_campsites')
+                .doc(campsiteId)
+                .get();
 
-    Map<String, dynamic> booking = {
-      ...doc.data(),
-      'campsiteName': campsiteName,
-      'id': doc.id, 
-    };
+        String campsiteName =
+            campsiteDoc.data()?['Name'] ?? 'No campsite name found';
 
-    if (doc.data().containsKey('Status') && doc.data()['Status'] == 'Paid') {
-      if (bookingDate.isAfter(DateTime.now())) {
-        tempUpcoming.add(booking);
-      } else {
-        tempPrevious.add(booking);
+        Map<String, dynamic> booking = {
+          ...doc.data(),
+          'campsiteName': campsiteName,
+          'id': doc.id,
+        };
+
+        if (doc.data().containsKey('Status') &&
+            doc.data()['Status'] == 'Paid') {
+          if (bookingDate.isAfter(DateTime.now())) {
+            tempUpcoming.add(booking);
+          } else {
+            tempPrevious.add(booking);
+          }
+        }
       }
     }
-  }
 
-  setState(() {
-    upcomingBookings = tempUpcoming;
-    previousBookings = tempPrevious;
-  });
-}
+    if (mounted) {
+      setState(() {
+        upcomingBookings = tempUpcoming;
+        previousBookings = tempPrevious;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +182,7 @@ void fetchBookings() async {
     bool confirmDelete = await showDeleteConfirmationDialog(context);
 
     if (confirmDelete) {
-      final campsite = FirebaseFirestore.instance.collection('Booking').doc();
+      final campsite = FirebaseFirestore.instance.collection('Cancel').doc();
       final json = {'Booking Id': booking['id']};
       await campsite.set(json);
 
