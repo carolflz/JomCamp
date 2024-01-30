@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison, deprecated_member_use
+
 import 'package:application/Screen/booking_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,8 +39,8 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
 
     // Check if GeoPoint is not null
     if (geoPoint != null) {
-      double latitude = geoPoint.latitude ?? 0.0;
-      double longitude = geoPoint.longitude ?? 0.0;
+      double latitude = geoPoint.latitude;
+      double longitude = geoPoint.longitude;
 
       // Open Google Maps with the specified LatLng
       String googleMapsUrl =
@@ -118,9 +120,12 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
                           SizedBox(height: 24),
                         ],
                       ),
-                      buildUnderlinedText('Campsite Fee', 'RM${widget.campsiteData["Fee"].toStringAsFixed(2)}'),
+                      buildUnderlinedText('Campsite Fee',
+                          'RM${widget.campsiteData["Fee"].toStringAsFixed(2)}'),
                       SizedBox(height: 22),
-                      buildUnderlinedText('Address', widget.campsiteData["Address"]),
+                      buildUnderlinedText(
+                          'Address', widget.campsiteData["Address"]),
+
                       SizedBox(height: 22),
                       buildUnderlinedText(
                           'Description', widget.campsiteData["Description"]),
@@ -128,7 +133,10 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
                       Center(
                         child: ElevatedButton(
                           onPressed: () async {
-                           DocumentReference bookingRef = FirebaseFirestore.instance.collection('Booking').doc();
+                            DocumentReference bookingRef = FirebaseFirestore
+                                .instance
+                                .collection('Booking')
+                                .doc();
                             await bookingRef.set({
                               'Campsite Id': widget.id,
                               'User Id': "82if9IwGprY5177fv80m",
@@ -137,13 +145,13 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
 
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => BookingScreen(bookingRef.id),
+                                builder: (context) =>
+                                    BookingScreen(bookingRef.id),
                               ),
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Color.fromARGB(255, 3, 61, 5), 
+                            backgroundColor: Color.fromARGB(255, 3, 61, 5),
                             minimumSize: Size(200, 50),
                           ),
                           child: Padding(
@@ -161,7 +169,8 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
                         child: ElevatedButton(
                           onPressed: navigateToGoogleMaps,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF3D251E), // Button color #3D251E
+                            backgroundColor:
+                                Color(0xFF3D251E), // Button color #3D251E
                             minimumSize: Size(200, 50), // Adjust button size
                           ),
                           child: Padding(
@@ -209,7 +218,8 @@ class _CampsiteDetailsScreenState extends State<CampsiteDetailsScreen> {
         '$label: $value',
         style: TextStyle(
           fontSize: 16,
-          color: tagColor == Colors.amber.shade300 ? Colors.black : Colors.white,
+          color:
+              tagColor == Colors.amber.shade300 ? Colors.black : Colors.white,
         ),
       ),
       shape: RoundedRectangleBorder(

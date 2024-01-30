@@ -51,7 +51,6 @@ class Display extends StatelessWidget {
   Widget build(BuildContext context) {
     String bookingId = item['Booking Id'];
     String equipmentId = item['Equipment Id'];
-
     return Card(
       // Set the shape of the card using a rounded rectangle border with a 8 pixel radius
       shape: RoundedRectangleBorder(
@@ -92,17 +91,17 @@ class Display extends StatelessWidget {
                         .doc(bookingId)
                         .snapshots(),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const CircularProgressIndicator();
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
                       }
                       if (!snapshot.hasData) {
                         return const CircularProgressIndicator();
                       }
                       var output =
                           snapshot.data!.data() as Map<String, dynamic>;
-                      String date = output["Date"] ?? "Unknown Date";
-                      String time = output["Time"] ?? "Unknown Time";
-                      String userid = output["User Id"] ?? "Unknown User";
+                      String date = output["Date"];
+                      String time = output["Time"];
+                      String userid = output["User Id"];
 
                       return Column(
                         children: [
@@ -112,8 +111,8 @@ class Display extends StatelessWidget {
                                   .doc(userid)
                                   .snapshots(),
                               builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return const CircularProgressIndicator();
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
                                 }
                                 if (!snapshot.hasData) {
                                   return const CircularProgressIndicator();

@@ -1,5 +1,6 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
@@ -160,6 +161,21 @@ class Display extends StatelessWidget {
                                 .doc(id)
                                 .delete();
                             Navigator.of(context).pop();
+                            final snackBar = SnackBar(
+                              elevation: 0,
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: Colors.transparent,
+                              content: AwesomeSnackbarContent(
+                                title: 'Campsite Deletion',
+                                message:
+                                    'The Campsite has been Deleted from the System',
+                                contentType: ContentType.success,
+                              ),
+                            );
+
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(snackBar);
                           },
                           cancelBtnText: 'No',
                         );

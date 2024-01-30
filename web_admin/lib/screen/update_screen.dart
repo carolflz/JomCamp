@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, no_leading_underscores_for_local_identifiers, unused_local_variable, non_constant_identifier_names, use_build_context_synchronously
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -16,11 +17,11 @@ class UpdateScreen extends StatelessWidget {
     String _selectedLevel = '';
     String _selectedCategory = '';
 
-    final level_item = ['Beginner', 'Intermidiate', 'Advance'];
+    final level_item = ['Beginner', 'Intermediate', 'Advanced'];
     final category_item = [
       'Riverside',
       'Forested',
-      'Family-Friendly',
+      'Family-friendly',
       'Sunset-view',
       'Mountainous',
     ];
@@ -115,6 +116,20 @@ class UpdateScreen extends StatelessWidget {
                   });
 
                   Navigator.pop(context);
+                  final snackBar = SnackBar(
+                    elevation: 0,
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Colors.transparent,
+                    content: AwesomeSnackbarContent(
+                      title: 'Sucess',
+                      message: 'The Campsite Details has been updated ',
+                      contentType: ContentType.success,
+                    ),
+                  );
+
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(snackBar);
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orangeAccent,

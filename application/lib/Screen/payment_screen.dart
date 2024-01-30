@@ -94,7 +94,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Widget buildCartItems() {
     if (equipmentList.isEmpty) {
-      return Text('The cart is empty', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.5)));
+      return Text('The cart is empty',
+          style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.5)));
     } else {
       return ListView.builder(
         shrinkWrap: true,
@@ -184,94 +185,100 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 SizedBox(height: 8),
                 buildPaymentDetails(),
                 SizedBox(height: 20),
-            Center(
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      await FirebaseFirestore.instance
-                      .collection('Booking')
-                      .doc(widget.bookingId)
-                      .update({'Status': 'Paid'});
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => PaypalCheckout(
-                          sandboxMode: true,
-                          clientId:
-                              "AchNfiVRLO77ypi4ygKbrkfuTrw6VsBmpZfYYe-Jzn79U1XUZ6yEDUtyUtoiFL-Na2jSwDh2yc65Ydb0",
-                          secretKey:
-                              "EDMVGkkcx4ISmeFaZqkT4DdbS7ovkZnn9_eNuPmqg6SSlLvsucttVspHe4aIZWFLxkwVSLD7G6KWk52Z",
-                          returnURL: "success.snippetcoder.com",
-                          cancelURL: "cancel.snippetcoder.com",
-                          transactions: [
-                            {
-                              "amount": {
-                                "total": totalFee.toStringAsFixed(2),
-                                "currency": "MYR",
-                                // "details": {
-                                //   "campsite fee": campsiteFee.toStringAsFixed(2),
-                                //   "equipment fee": equipmentFee.toStringAsFixed(2),
-                                //   "delivery fee": deliveryFee.toStringAsFixed(2),
-                                // }
+                Center(
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          await FirebaseFirestore.instance
+                              .collection('Booking')
+                              .doc(widget.bookingId)
+                              .update({'Status': 'Paid'});
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (BuildContext context) => PaypalCheckout(
+                              sandboxMode: true,
+                              clientId:
+                                  "AchNfiVRLO77ypi4ygKbrkfuTrw6VsBmpZfYYe-Jzn79U1XUZ6yEDUtyUtoiFL-Na2jSwDh2yc65Ydb0",
+                              secretKey:
+                                  "EDMVGkkcx4ISmeFaZqkT4DdbS7ovkZnn9_eNuPmqg6SSlLvsucttVspHe4aIZWFLxkwVSLD7G6KWk52Z",
+                              returnURL: "success.snippetcoder.com",
+                              cancelURL: "cancel.snippetcoder.com",
+                              transactions: [
+                                {
+                                  "amount": {
+                                    "total": totalFee.toStringAsFixed(2),
+                                    "currency": "MYR",
+                                    // "details": {
+                                    //   "campsite fee": campsiteFee.toStringAsFixed(2),
+                                    //   "equipment fee": equipmentFee.toStringAsFixed(2),
+                                    //   "delivery fee": deliveryFee.toStringAsFixed(2),
+                                    // }
+                                  },
+                                }
+                              ],
+                              note:
+                                  "Contact us for any questions on your order.",
+                              onSuccess: (Map params) async {
+                                print("onSuccess: $params");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BookingHistoryScreen(),
+                                  ),
+                                );
                               },
-                            }
-                          ],                          
-                          note: "Contact us for any questions on your order.",
-                          onSuccess: (Map params) async {
-                            print("onSuccess: $params");
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => BookingHistoryScreen(),
-                                ),
-                              );
-                          },
-                          onError: (error) {
-                            print("onError: $error");
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => BookingHistoryScreen(),
-                                ),
-                              );
-                            // Navigator.pop(context);
-                          },
-                          onCancel: () {
-                            print('cancelled:');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => BookingHistoryScreen(),
-                                ),
-                              );
-                            // Navigator.pop(context);
-                          },
+                              onError: (error) {
+                                print("onError: $error");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BookingHistoryScreen(),
+                                  ),
+                                );
+                                // Navigator.pop(context);
+                              },
+                              onCancel: () {
+                                print('cancelled:');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BookingHistoryScreen(),
+                                  ),
+                                );
+                                // Navigator.pop(context);
+                              },
+                            ),
+                          ));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.all(10.0),
+                          backgroundColor: Colors.black,
+                          fixedSize: Size(200, 50),
+                          textStyle:
+                              TextStyle(fontSize: 18, letterSpacing: 5.0),
+                          shape: StadiumBorder(),
                         ),
-                      ));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.all(10.0),
-                      backgroundColor: Colors.black,
-                      fixedSize: Size(200, 50),
-                      textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
-                      shape: StadiumBorder(),
-                    ),
-                    child: Text("CHECKOUT"),
-                  ),
-                  SizedBox(height: 18.0),
-                  ElevatedButton(
-                    child: Text("CANCEL"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.all(10.0),
-                      backgroundColor: Color.fromARGB(255, 3, 61, 5),
-                      fixedSize: Size(200, 50),
-                      textStyle: TextStyle(fontSize: 18, letterSpacing: 5.0),
-                      shape: StadiumBorder(),
-                    ),
+                        child: Text("CHECKOUT"),
+                      ),
+                      SizedBox(height: 18.0),
+                      ElevatedButton(
+                        child: Text("CANCEL"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.all(10.0),
+                          backgroundColor: Color.fromARGB(255, 3, 61, 5),
+                          fixedSize: Size(200, 50),
+                          textStyle:
+                              TextStyle(fontSize: 18, letterSpacing: 5.0),
+                          shape: StadiumBorder(),
+                        ),
                       ),
                     ],
                   ),

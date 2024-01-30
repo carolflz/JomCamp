@@ -1,3 +1,4 @@
+import 'package:application/Models/constant.dart';
 import 'package:application/Screen/booking_history_screen.dart';
 import 'package:application/Screen/comunity_screen.dart';
 import 'package:application/Screen/comunityflwing_screen.dart';
@@ -23,7 +24,9 @@ class _MainScreenState extends State<MainScreen> {
     ExploreScreen(),
     ComunityScreen(),
     BookingHistoryScreen(),
-    ProfileScreen(),
+    ProfileScreen(
+      userID: userId,
+    ),
     ComunityFollowingScreen(),
   ];
 

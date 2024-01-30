@@ -172,18 +172,48 @@ void fetchBookings() async {
     bool confirmDelete = await showDeleteConfirmationDialog(context);
 
     if (confirmDelete) {
-      await FirebaseFirestore.instance
-          .collection('Booking')
-          .doc(booking['id'])
-          .delete();
+      final campsite = FirebaseFirestore.instance.collection('Booking').doc();
+      final json = {'Booking Id': booking['id']};
+      await campsite.set(json);
 
-      setState(() {
-        if (upcomingBookings.contains(booking)) {
-          upcomingBookings.remove(booking);
-        } else if (previousBookings.contains(booking)) {
-          previousBookings.remove(booking);
-        }
-      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Container(
+        padding: const EdgeInsets.all(8),
+        height: 85,
+        decoration: const BoxDecoration(
+            color: Colors.green,
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: Row(children: [
+          Icon(
+            Icons.check_circle,
+            color: Colors.white,
+            size: 40,
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Expanded(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Request Send",
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              Text(
+                "Your Cancelation Request has been send. Waiting for approval.",
+                style: TextStyle(color: Colors.white, fontSize: 15),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              )
+            ],
+          ))
+        ]),
+      )));
     }
   }
 
@@ -200,9 +230,10 @@ void fetchBookings() async {
                   onPressed: () => Navigator.of(context).pop(false),
                 ),
                 ElevatedButton(
-                  child: Text("Delete"),
-                  onPressed: () => Navigator.of(context).pop(true),
-                ),
+                    child: Text("Delete"),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    }),
               ],
             );
           },

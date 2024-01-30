@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:application/Screen/payment_screen.dart';
 import 'package:application/Screen/rental_screen.dart';
 import 'package:flutter/material.dart';
@@ -33,21 +35,24 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Future<void> fetchCampsiteInfo() async {
     try {
-      DocumentSnapshot<Map<String, dynamic>> bookingDoc = await FirebaseFirestore.instance
-          .collection('Booking')
-          .doc(widget.bookingId)
-          .get();
+      DocumentSnapshot<Map<String, dynamic>> bookingDoc =
+          await FirebaseFirestore.instance
+              .collection('Booking')
+              .doc(widget.bookingId)
+              .get();
 
       String campsiteId = bookingDoc.data()?['Campsite Id'];
 
       if (campsiteId != null) {
-        DocumentSnapshot<Map<String, dynamic>> campsiteDoc = await FirebaseFirestore.instance
-            .collection('google_map_campsites')
-            .doc(campsiteId)
-            .get();
+        DocumentSnapshot<Map<String, dynamic>> campsiteDoc =
+            await FirebaseFirestore.instance
+                .collection('google_map_campsites')
+                .doc(campsiteId)
+                .get();
 
         setState(() {
-          campsiteName = campsiteDoc.data()?['Name'] ?? 'No campsite name found';
+          campsiteName =
+              campsiteDoc.data()?['Name'] ?? 'No campsite name found';
           campsitePrice = campsiteDoc.data()?['Fee'] ?? 0;
           imageUrl = campsiteDoc.data()?['image'] ?? '';
         });
@@ -181,7 +186,8 @@ class _BookingScreenState extends State<BookingScreen> {
                     // Use widget.bookingId, which is the ID passed to this screen
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => RentalScreen(bookingId: widget.bookingId),
+                        builder: (context) =>
+                            RentalScreen(bookingId: widget.bookingId),
                       ),
                     );
                   },
@@ -202,11 +208,13 @@ class _BookingScreenState extends State<BookingScreen> {
                   ElevatedButton(
                     child: Text("CONFIRM"),
                     onPressed: () async {
-                      await addBooking(selectedDate, selectedTime.format(context));
+                      await addBooking(
+                          selectedDate, selectedTime.format(context));
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PaymentScreen(bookingId: widget.bookingId),
+                          builder: (context) =>
+                              PaymentScreen(bookingId: widget.bookingId),
                         ),
                       );
                     },
@@ -244,28 +252,31 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-
   Future<void> addBooking(DateTime selectedDate, String selectedTime) async {
-  try {
-    DocumentReference bookingRef =
-        FirebaseFirestore.instance.collection('Booking').doc(widget.bookingId);
+    try {
+      DocumentReference bookingRef = FirebaseFirestore.instance
+          .collection('Booking')
+          .doc(widget.bookingId);
 
-    await bookingRef.update({
-      'Date': DateFormat('dd/MM/yyyy').format(selectedDate),
-      'Time': selectedTime,
-    });
-  } catch (e) {
-    print('An error occurred while adding the date and time to the booking: $e');
+      await bookingRef.update({
+        'Date': DateFormat('dd/MM/yyyy').format(selectedDate),
+        'Time': selectedTime,
+      });
+    } catch (e) {
+      print(
+          'An error occurred while adding the date and time to the booking: $e');
+    }
   }
-}
 
   Future<void> cancelBooking() async {
     try {
-      DocumentReference bookingRef = FirebaseFirestore.instance.collection('Booking').doc(widget.bookingId);
+      DocumentReference bookingRef = FirebaseFirestore.instance
+          .collection('Booking')
+          .doc(widget.bookingId);
 
       await bookingRef.delete();
 
-      Navigator.pop(context); 
+      Navigator.pop(context);
     } catch (e) {
       print('An error occurred while canceling the booking: $e');
     }

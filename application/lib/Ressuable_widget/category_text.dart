@@ -28,7 +28,7 @@ class _CategoryTextState extends State<CategoryText> {
     FirebaseFirestore db = FirebaseFirestore.instance;
     id = [];
     return await db.collection("google_map_campsites").get().then(
-          (querySnapshot) {
+      (querySnapshot) {
         List<Map<String, dynamic>> dataFromFirestore = [];
         print("Successfully completed");
         for (var doc in querySnapshot.docs) {
@@ -115,34 +115,46 @@ class _CategoryTextState extends State<CategoryText> {
           dataFetched == null
               ? Container()
               : ListView.builder(
-            shrinkWrap: true,
-            physics: ClampingScrollPhysics(),
-            itemCount: dataFetched.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(dataFetched[index]["Name"]),
-                leading: Image.network(dataFetched[index]["image"]),
-                trailing: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CampsiteDetailsScreen(
-                          dataFetched[index],
-                          id[index],
+                  shrinkWrap: true,
+                  physics: ClampingScrollPhysics(),
+                  itemCount: dataFetched.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(dataFetched[index]["Name"]),
+                      leading: SizedBox(
+                        width: 100.0, // Set your desired width
+                        height: 56.0, // Set your desired height
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                              8.0), // Adjust the corner radius if needed
+                          child: Image.network(
+                            dataFetched[index]["image"],
+                            fit: BoxFit
+                                .cover, // This ensures the image covers the box area
+                          ),
                         ),
+                      ),
+                      trailing: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CampsiteDetailsScreen(
+                                dataFetched[index],
+                                id[index],
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.green,
+                        ),
+                        child: Text('View Details'),
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.green,
-                  ),
-                  child: Text('View Details'),
                 ),
-              );
-            },
-          ),
         ],
       ),
     );
